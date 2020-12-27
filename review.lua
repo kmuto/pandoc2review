@@ -158,7 +158,7 @@ function CodeBlock(s, attr)
 end
 
 function LineBlock(s)
-  -- | block. FIXME://soruce代替でよいか
+  -- | block. FIXME://source代替でよいか
   return "//source{\n" .. table.concat(s, "\n") .. "\n//}"
 end
 
