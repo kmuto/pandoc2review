@@ -9,7 +9,7 @@ local fig_num = 0
 local note_num = 0
 local footnotes = {}
 
-function surround_inline(s)
+local function surround_inline(s)
   if (string.match(s, "{") or string.match(s, "}")) then
     if (string.match(s, "%$")) then -- use % for regexp escape
       if (string.match(s, "|")) then
@@ -27,7 +27,7 @@ function surround_inline(s)
   return "{" .. s .. "}"
 end
 
-function html_align(align)
+local function html_align(align)
   if align == "AlignLeft" then
     return ""
   elseif align == "AlignRight" then
