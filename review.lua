@@ -9,8 +9,6 @@ local fig_num = 0
 local note_num = 0
 local footnotes = {}
 
-local write_blank = nil
-
 function surround_inline(s)
   if (string.match(s, "{") or string.match(s, "}")) then
     if (string.match(s, "%$")) then -- use % for regexp escape
@@ -29,16 +27,6 @@ function surround_inline(s)
   return "{" .. s .. "}"
 end
 
-function blank()
-  if (write_blank == nil) then
-    write_blank = 1
-    return ""
-  else
-    write_blank = nil
-    return "\n"
-  end
-end
-
 function html_align(align)
   if align == "AlignLeft" then
     return ""
@@ -52,7 +40,7 @@ function html_align(align)
 end
 
 function Blocksep()
-  return "\n"
+  return "\n\n"
 end
 
 function Doc(body, metadata, variables)
@@ -62,7 +50,7 @@ function Doc(body, metadata, variables)
   end
   add(body)
   if (#footnotes > 0) then
-    add(table.concat(footnotes, "\n"))
+    add("\n" .. table.concat(footnotes, "\n"))
   end
   return table.concat(buffer, "\n")
 end
@@ -88,7 +76,7 @@ function Plain(s)
 end
 
 function Para(s)
-  return blank() .. string.gsub(s, "\n", "") .. blank()
+  return string.gsub(s, "\n", "")
 end
 
 local function attr_val(attr, key)
@@ -121,7 +109,7 @@ end
 
 function HorizontalRule()
   -- FIXME: 無視するフラグがほしい？
-  return blank() .. "//hr" .. blank()
+  return "//hr"
 end
 
 function BulletList(items)
@@ -130,7 +118,7 @@ function BulletList(items)
   for _, item in pairs(items) do
     table.insert(buffer, " * " .. item)
   end
-  return blank() .. table.concat(buffer, "\n") .. blank()
+  return table.concat(buffer, "\n")
 end
 
 function OrderedList(items, start)
@@ -141,7 +129,7 @@ function OrderedList(items, start)
     table.insert(buffer, " " .. n .. ". " .. item)
     n = n + 1
   end
-  return blank() .. table.concat(buffer, "\n") .. blank()
+  return table.concat(buffer, "\n")
 end
 
 function DefinitionList(items)
@@ -151,32 +139,36 @@ function DefinitionList(items)
       table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
     end
   end
-  return blank() .. table.concat(buffer, "\n") .. "\n" .. blank()
+  return table.concat(buffer, "\n") .. "\n"
 end
 
 
 function BlockQuote(s)
-  return blank() .. "//quote{\n" .. s .. "//}" .. blank()
+  return "//quote{\n" .. s .. "\n//}"
 end
 
 function CodeBlock(s, attr)
   -- FIXME: コードリストのキャプションを付ける方法はpandoc/Markdownにそもそもない？
   cls = attr_val(attr, "class")
   if (cls ~= "") then
-    return blank() .. "//emlist[][" .. cls .. "]{\n" .. s .. "\n//}" .. blank()
+    return "//emlist[][" .. cls .. "]{\n" .. s .. "\n//}"
   else
-    return blank() .. "//emlist{\n" .. s .. "\n//}" .. blank()
+    return "//emlist{\n" .. s .. "\n//}"
   end
 end
 
 function LineBlock(s)
   -- | block. FIXME://soruce代替でよいか
-  return blank() .. "//source{\n" .. table.concat(s, "\n") .. "\n//}" .. blank()
+  return "//source{\n" .. table.concat(s, "\n") .. "\n//}"
 end
 
 function Link(s, src, tit)
   -- FIXME: titを使う可能性はあるか？
-  return "@<href>" .. surround_inline(src .. "," .. s)
+  if (src == s) then
+    return "@<href>" .. surround_inline(src)
+  else
+    return "@<href>" .. surround_inline(src .. "," .. s)
+  end
 end
 
 function Code(s, attr)
@@ -211,7 +203,7 @@ function InlineMath(s)
 end
 
 function DisplayMath(s)
-  return blank() .. "//texequation{\n" .. s .. "\n//}" .. blank()
+  return "//texequation{\n" .. s .. "\n//}"
 end
 
 function Table(caption, aligns, widths, headers, rows)
@@ -248,7 +240,7 @@ function Table(caption, aligns, widths, headers, rows)
   end
   add("//}")
 
-  return blank() .. table.concat(buffer, "\n") .. blank()
+  return table.concat(buffer, "\n")
 end
 
 function CaptionedImage(s, src, tit)
@@ -265,15 +257,13 @@ function CaptionedImage(s, src, tit)
     table.insert(buffer, src)
   end
   table.insert(buffer, "//}")
-  return blank() .. table.concat(buffer, "\n") .. blank()
+  return table.concat(buffer, "\n")
 end
 
 function Note(s)
   note_num = note_num + 1
   table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. s .. "]")
   return "@<fn>{fn" .. note_num .. "}"
-  -- table.insert(buffer, "@<fn>{fn" .. note_num .. "}")
-  -- return table.concat(buffer, "")
 end
 
 function Cite(s, cs)
@@ -282,7 +272,7 @@ function Cite(s, cs)
 end
 
 function Div(s, attr)
-  return blank() .. "//" .. attr_val(attr, "class") .. "{\n" .. s .. "//}" .. blank()
+  return "//" .. attr_val(attr, "class") .. "{\n" .. s .. "\n//}"
 end
 
 function Span(s, attr)
