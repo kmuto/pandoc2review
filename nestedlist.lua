@@ -25,14 +25,8 @@ function nestablelist(elem, tag)
   return elem
 end
 
-function BulletList(elem)
-  return nestablelist(elem)
-end
-
-function OrderedList(elem)
-  return nestablelist(elem)
-end
-
-function DefinitionList(elem)
-  return nestablelist(elem)
-end
+return {
+  {BulletList = nestablelist},
+  {OrderedList = nestablelist},
+  {DefinitionList = nestablelist}
+}
