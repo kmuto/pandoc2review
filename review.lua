@@ -167,18 +167,28 @@ local function attr_val(attr, key)
 end
 
 function Header(level, s, attr)
-  headmark = ""
+  local headmark = ""
   for i = 1, level do
     headmark = headmark .. "="
   end
 
-  cls = attr_val(attr, "class")
-  if (cls ~= "") then
-    if (cls == "unnumbered") then
-      cls = "nonum"
-    end
-    headmark = headmark .. "[" .. cls .. "]"
+  local classes = {}
+  for cls in attr_val(attr, "class"):gmatch("[^%s]+") do
+    classes[cls] = true
   end
+
+  headmark = headmark .. (
+    -- Re:view's behavior
+    classes["column"] and "[column]" or (
+    classes["nonum"] and "[nonum]" or (
+    classes["nodisp"] and "[nodisp]" or (
+    classes["notoc"] and "[notoc]" or (
+    -- Pandoc's behavior
+    classes["unnumbered"] and (
+      classes["unlisted"] and "[notoc]" or "[nonum]") or (
+    -- None
+    "")))))
+  )
 
   if (config.use_header_id and attr.id ~= "" and attr.id ~= s) then
     headmark = headmark .. "{" .. attr.id .. "}"
