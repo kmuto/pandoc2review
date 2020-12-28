@@ -149,7 +149,7 @@ function SoftBreak(s)
 end
 
 function Plain(s)
-  return s
+  return string.gsub(s, "\n", "")
 end
 
 function Para(s)
