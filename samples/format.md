@@ -210,3 +210,11 @@ code内 '` \ -- --- ’ – —
 ```
 
 ## 見出し内 '` \\ -- --- ’ – —
+
+## foo {.column}
+## foo {.nonum}
+## foo {.nodisp}
+## foo {.notoc}
+## foo {.unnumbered}
+## foo {.unnumbered .unlisted}
+## foo {-}

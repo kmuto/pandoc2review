@@ -178,7 +178,7 @@ function Header(level, s, attr)
   end
 
   headmark = headmark .. (
-    -- Re:view's behavior
+    -- Re:VIEW's behavior
     classes["column"] and "[column]" or (
     classes["nonum"] and "[nonum]" or (
     classes["nodisp"] and "[nodisp]" or (
