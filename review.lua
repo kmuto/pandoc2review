@@ -25,6 +25,48 @@ local footnotes = {}
 -- internal
 local metadata = nil
 local stringify = (require "pandoc.utils").stringify
+local inline_commands = {
+  -- processed if given as classes of Span elements
+  -- true if syntax is `@<command>{string}`
+  --- formats
+  kw = true,
+  bou = true,
+  ami = true,
+  u = true,
+  b = true,
+  i = true,
+  strong = true,
+  em = true,
+  tt = true,
+  tti = true,
+  ttb = true,
+  code = true,
+  tcy = true,
+  --- ref
+  chap = true,
+  title = true,
+  chapref = true,
+  list = true,
+  img =  true,
+  table = true,
+  eq = true,
+  hd = true,
+  column = true,
+  --- others
+  ruby = false,
+  br = false,
+  uchar = true,
+  href = false,
+  icon = true,
+  m = true,
+  w = true,
+  wb = true,
+  raw = false,
+  embed = false,
+  idx = true,
+  hidx = true,
+  balloon = true,
+}
 
 local function try_catch(what)
   -- ref: http://bushimichi.blogspot.com/2016/11/lua-try-catch.html
@@ -55,6 +97,10 @@ local function surround_inline(s)
     end
   end
   return "{" .. s .. "}"
+end
+
+local function format_inline(fmt, s)
+  return string.format('@<%s>%s', fmt, surround_inline(s))
 end
 
 local function html_align(align)
@@ -217,41 +263,36 @@ end
 
 function Link(s, src, tit)
   -- FIXME: titを使う可能性はあるか？
-  if (src == s) then
-    return "@<href>" .. surround_inline(src)
-  else
-    return "@<href>" .. surround_inline(src .. "," .. s)
-  end
+  return format_inline('href', src .. ((src == s) and ("," .. s) or ""))
 end
 
 function Code(s, attr)
   -- ignore attr
-  return "@<" .. config.code .. ">" .. surround_inline(s)
+  return format_inline(config.code, s)
 end
 
 function Emph(s)
-  return "@<" .. config.italic .. ">" .. surround_inline(s)
+  return format_inline(config.italic, s)
 end
 
 function Strong(s)
-  -- FIXME: ___ とすると Strong(Emph)、つまり @<b>$@<i>{ITBOLD}$ が産まれてしまう…
-  return "@<" .. config.bold .. ">" .. surround_inline(s)
+  return format_inline(config.bold, s)
 end
 
 function Strikeout(s)
-  return "@<" .. config.strike .. ">" .. surround_inline(s)
+  return format_inline(config.strike, s)
 end
 
 function Subscript(s)
-  return "@<sub>" .. surround_inline(s)
+  return format_inline('sub', s)
 end
 
 function Superscript(s)
-  return "@<sup>" .. surround_inline(s)
+  return format_inline('sup', s)
 end
 
 function InlineMath(s)
-  return "@<m>" .. surround_inline(s)
+  return format_inline('m', s)
 end
 
 function DisplayMath(s)
@@ -328,7 +369,22 @@ function Div(s, attr)
 end
 
 function Span(s, attr)
-  -- FIXME: attrを捨ててよいか
+  -- ruby and kw with a supplement
+  local a = ''
+  for _, cmd in ipairs({'ruby', 'kw'}) do
+    a = attr_val(attr, cmd)
+    if a ~= '' then
+      s = format_inline(cmd, s .. ', ' .. a)
+    end
+  end
+
+  -- inline format
+  for cmd in attr_val(attr, "class"):gmatch('[^%s]+') do
+    if inline_commands[cmd] then
+      s = format_inline(cmd, s)
+    end
+  end
+
   return s
 end
 
