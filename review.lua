@@ -285,7 +285,7 @@ function Strikeout(s)
 end
 
 function Underline(s)
-  return "@<" .. config.underline .. ">" .. surround_inline(s)
+  return format_inline(config.underline, s)
 end
 
 function Subscript(s)
@@ -319,7 +319,7 @@ function Table(caption, aligns, widths, headers, rows)
   for i, h in pairs(headers) do
     align = html_align(aligns[i])
     if (config.use_table_align and align ~= "") then
-      h = "@<dtp>{table align=" .. align .. "}" .. h
+      h = format_inline("dtp", "table align=" .. align) .. h
     end
     table.insert(tmp, h)
   end
@@ -330,7 +330,7 @@ function Table(caption, aligns, widths, headers, rows)
       for i, c in pairs(row) do
       align = html_align(aligns[i])
       if (config.use_table_align and align ~= "") then
-        c = "@<dtp>{table align=" .. align .. "}" .. c
+        c = format_inline("dtp", "table align=" .. align) .. c
       end
       table.insert(tmp, c)
     end
@@ -367,7 +367,7 @@ end
 function Note(s)
   note_num = note_num + 1
   table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. s .. "]")
-  return "@<fn>{fn" .. note_num .. "}"
+  return format_inline("fn", "fn" .. note_num)
 end
 
 function Cite(s, cs)
