@@ -342,9 +342,10 @@ function Table(caption, aligns, widths, headers, rows)
 end
 
 function Image(s, src, tit)
-  -- FIXME: markdownだと登場しないので、シチュエーションがよくわからない
-  log("Image isn't implemented yet.")
-  return CaptionedImage(s, src, tit)
+  -- Re:VIEW @<icon> ignores caption and title
+  local id = string.gsub(src, "%.%w+$", "")
+  id = string.gsub(id, "images/", "")
+  return format_inline("icon", id)
 end
 
 function CaptionedImage(s, src, tit)
