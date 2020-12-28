@@ -101,7 +101,7 @@ local function surround_inline(s)
 end
 
 local function format_inline(fmt, s)
-  return string.format('@<%s>%s', fmt, surround_inline(s))
+  return string.format("@<%s>%s", fmt, surround_inline(s))
 end
 
 local function html_align(align)
@@ -264,7 +264,7 @@ end
 
 function Link(s, src, tit)
   -- FIXME: titを使う可能性はあるか？
-  return format_inline('href', src .. ((src == s) and ("," .. s) or ""))
+  return format_inline("href", src .. ((src == s) and ("," .. s) or ""))
 end
 
 function Code(s, attr)
@@ -285,19 +285,19 @@ function Strikeout(s)
 end
 
 function Underline(s)
-  return "@<" .. config.underline .. ">" .. surround_inline(s)
+  return format_inline(config.underline, s)
 end
 
 function Subscript(s)
-  return format_inline('sub', s)
+  return format_inline("sub", s)
 end
 
 function Superscript(s)
-  return format_inline('sup', s)
+  return format_inline("sup", s)
 end
 
 function InlineMath(s)
-  return format_inline('m', s)
+  return format_inline("m", s)
 end
 
 function DisplayMath(s)
@@ -319,7 +319,7 @@ function Table(caption, aligns, widths, headers, rows)
   for i, h in pairs(headers) do
     align = html_align(aligns[i])
     if (config.use_table_align and align ~= "") then
-      h = "@<dtp>{table align=" .. align .. "}" .. h
+      h = format_inline("dtp", "table align=" .. align) .. h
     end
     table.insert(tmp, h)
   end
@@ -330,7 +330,7 @@ function Table(caption, aligns, widths, headers, rows)
       for i, c in pairs(row) do
       align = html_align(aligns[i])
       if (config.use_table_align and align ~= "") then
-        c = "@<dtp>{table align=" .. align .. "}" .. c
+        c = format_inline("dtp", "table align=" .. align) .. c
       end
       table.insert(tmp, c)
     end
@@ -367,7 +367,7 @@ end
 function Note(s)
   note_num = note_num + 1
   table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. s .. "]")
-  return "@<fn>{fn" .. note_num .. "}"
+  return format_inline("fn", "fn" .. note_num)
 end
 
 function Cite(s, cs)
@@ -402,16 +402,16 @@ end
 
 function Span(s, attr)
   -- ruby and kw with a supplement
-  local a = ''
-  for _, cmd in ipairs({'ruby', 'kw'}) do
+  local a = ""
+  for _, cmd in ipairs({"ruby", "kw"}) do
     a = attr_val(attr, cmd)
-    if a ~= '' then
-      s = format_inline(cmd, s .. ', ' .. a)
+    if a ~= "" then
+      s = format_inline(cmd, s .. ", " .. a)
     end
   end
 
   -- inline format
-  for cmd in attr_val(attr, "class"):gmatch('[^%s]+') do
+  for cmd in attr_val(attr, "class"):gmatch("[^%s]+") do
     if inline_commands[cmd] then
       s = format_inline(cmd, s)
     end
