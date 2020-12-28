@@ -262,7 +262,7 @@ function CodeBlock(s, attr)
   not_lang["number-lines"] = true
   for key,_ in pairs(classes) do
     if not_lang[key] ~= true then
-      lang = key
+      lang = "[" .. key .. "]"
       break
     end
   end
@@ -287,14 +287,19 @@ function CodeBlock(s, attr)
   if (caption ~= "") then
     list_num = list_num + 1
     identifier = "[list" .. list_num .. "]"
+    caption = "[" .. caption .. "]"
   else
     em = "em"
+    if lang ~= "" then
+      caption = "[" .. caption .. "]"
+    end
   end
 
-  return string.format(
-    "%s//%slist%s%s[%s][%s]{\n%s\n//}",
-    firstlinenum, em, num, identifier, caption, lang, s
-  )
+  return (
+      firstlinenum ..
+      "//" .. em .. "list" .. num .. identifier .. caption .. lang ..
+      "{\n" .. s .. "\n//}"
+    )
 end
 
 function LineBlock(s)
