@@ -12,6 +12,7 @@ local config = {
   italic = "i",
   code = "tt",
   strike = "u", -- XXX: Re:VIEW doesn't support <strike>
+  underline = "u",
   lineblock = "source", --- XXX: Re:VIEW doesn't provide poem style by default
 }
 
@@ -242,6 +243,10 @@ function Strikeout(s)
   return "@<" .. config.strike .. ">" .. surround_inline(s)
 end
 
+function Underline(s)
+  return "@<" .. config.underline .. ">" .. surround_inline(s)
+end
+
 function Subscript(s)
   return "@<sub>" .. surround_inline(s)
 end
@@ -295,6 +300,12 @@ function Table(caption, aligns, widths, headers, rows)
   return table.concat(buffer, "\n")
 end
 
+function Image(s, src, tit)
+  -- FIXME: markdownだと登場しないので、シチュエーションがよくわからない
+  log("Image isn't implemented yet.")
+  return CaptionedImage(s, src, tit)
+end
+
 function CaptionedImage(s, src, tit)
   local id = string.gsub(s, "%.%w+$", "")
   id = string.gsub(id, "images/", "")
@@ -321,6 +332,27 @@ end
 function Cite(s, cs)
   -- use @ as is.
   return s
+end
+
+function Quoted(quotetype, s)
+  if (quotetype == "SingleQuote") then
+    return SingleQuoted(s)
+  end
+  if (quotetype == "DoubleQuote") then
+    return DoubleQuoted(s)
+  end
+end
+
+function SingleQuoted(s)
+  return "'" .. s .. "'"
+end
+
+function DoubleQuoted(s)
+  return '"' .. s .. '"'
+end
+
+function SmallCaps(s)
+  return "◆→SMALLCAPS:" .. s .. "←◆"
 end
 
 function Div(s, attr)
@@ -383,6 +415,10 @@ if (metadata) then
 
   if (metadata.pandoc2review and metadata.pandoc2review.strike) then
     config.strike = stringify(metadata.pandoc2review.strike)
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.underline) then
+    config.underline = stringify(metadata.pandoc2review.underline)
   end
 
   if (metadata.pandoc2review and metadata.pandoc2review.lineblock) then

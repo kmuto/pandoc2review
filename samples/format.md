@@ -191,6 +191,8 @@ H~2~O は液体です。2^10^ は 1024 です。
 HEY! <span class="A">hoge</span>
 </div>
 
+"DOUBLEQUOTE"、'SINGLEQUOTE'
+
 'はどうなる？ **'はどうなる？**
 ’はどうなる？ **’はどうなる？**
 `はどうなる？
