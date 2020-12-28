@@ -1,6 +1,6 @@
 # pandoc2review
 
-**pandoc2review** is Re:VIEW Filter/Writer for Pandoc. You can convert any documents to Re:VIEW format files using Pandoc and this filter.
+**pandoc2review** is Re:VIEW Filter/Writer for Pandoc. You can convert any documents to [Re:VIEW](https://reviewml.org/) format.
 
 ## Installation
 
