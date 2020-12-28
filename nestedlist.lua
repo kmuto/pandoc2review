@@ -17,8 +17,8 @@ function nestablelist(elem, tag)
 
     local i_add = 0
     for _,i in ipairs(i_child) do
-      blocks:insert(i + i_add, beginchild)
-      blocks:insert(i + i_add + 2, endchild)
+      table.insert(blocks, i + i_add, beginchild)
+      table.insert(blocks, i + i_add + 2, endchild)
       i_add = i_add + 2
     end
   end
