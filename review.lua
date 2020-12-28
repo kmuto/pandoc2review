@@ -176,13 +176,21 @@ function BlockQuote(s)
 end
 
 function CodeBlock(s, attr)
-  -- FIXME: コードリストのキャプションを付ける方法はpandoc/Markdownにそもそもない？
+  tag = "//"
+
+  caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
+  if (caption ~= "") then
+    list_num = list_num + 1
+    tag = tag .. "list[list" .. list_num .. "][" .. caption .. "]"
+  else
+    tag = tag .. "emlist"
+  end
+
   cls = attr_val(attr, "class")
   if (cls ~= "") then
-    return "//emlist[][" .. cls .. "]{\n" .. s .. "\n//}"
-  else
-    return "//emlist{\n" .. s .. "\n//}"
+    tag = tag .. "[][" .. cls .. "]"
   end
+  return tag .. "{\n" .. s .. "\n//}"
 end
 
 function LineBlock(s)

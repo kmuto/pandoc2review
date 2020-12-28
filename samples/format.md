@@ -122,7 +122,7 @@ class Hoge
 end
 ~~~
 
-```
+```{caption="ほげほげ"}
 class Hoge
 end
 ```
