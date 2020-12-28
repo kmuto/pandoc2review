@@ -101,7 +101,7 @@ local function surround_inline(s)
 end
 
 local function format_inline(fmt, s)
-  return string.format('@<%s>%s', fmt, surround_inline(s))
+  return string.format("@<%s>%s", fmt, surround_inline(s))
 end
 
 local function html_align(align)
@@ -264,7 +264,7 @@ end
 
 function Link(s, src, tit)
   -- FIXME: titを使う可能性はあるか？
-  return format_inline('href', src .. ((src == s) and ("," .. s) or ""))
+  return format_inline("href", src .. ((src == s) and ("," .. s) or ""))
 end
 
 function Code(s, attr)
@@ -289,15 +289,15 @@ function Underline(s)
 end
 
 function Subscript(s)
-  return format_inline('sub', s)
+  return format_inline("sub", s)
 end
 
 function Superscript(s)
-  return format_inline('sup', s)
+  return format_inline("sup", s)
 end
 
 function InlineMath(s)
-  return format_inline('m', s)
+  return format_inline("m", s)
 end
 
 function DisplayMath(s)
@@ -402,16 +402,16 @@ end
 
 function Span(s, attr)
   -- ruby and kw with a supplement
-  local a = ''
-  for _, cmd in ipairs({'ruby', 'kw'}) do
+  local a = ""
+  for _, cmd in ipairs({"ruby", "kw"}) do
     a = attr_val(attr, cmd)
-    if a ~= '' then
-      s = format_inline(cmd, s .. ', ' .. a)
+    if a ~= "" then
+      s = format_inline(cmd, s .. ", " .. a)
     end
   end
 
   -- inline format
-  for cmd in attr_val(attr, "class"):gmatch('[^%s]+') do
+  for cmd in attr_val(attr, "class"):gmatch("[^%s]+") do
     if inline_commands[cmd] then
       s = format_inline(cmd, s)
     end
@@ -485,7 +485,7 @@ end
 local meta = {}
 meta.__index =
   function(_, key)
-    log(string.format("WARNING: Undefined function '%s'\n", key))
+    log(string.format('WARNING: Undefined function "%s"\n', key))
     return function() return "" end
   end
 
