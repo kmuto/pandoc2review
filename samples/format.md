@@ -127,6 +127,11 @@ class Hoge
 end
 ```
 
+```{.foo caption="ほげほげ"}
+class Hoge
+end
+```
+
 |header1|header2|header3|
 |:--|--:|:--:|
 |align left|align right|align center|

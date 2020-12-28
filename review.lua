@@ -268,7 +268,7 @@ function CodeBlock(s, attr)
 end
 
 function LineBlock(s)
-  -- | block. FIXME://source代替でよいか
+  -- | block
   return "//" .. config.lineblock .. "{\n" .. table.concat(s, "\n") .. "\n//}"
 end
 

@@ -13,7 +13,7 @@ opts.on('--help', 'Prints this message and quit.') do
   puts opts.help
   exit 0
 end
-opts.on('--heading num', 'Add <num> to heading level.') do |v|
+opts.on('--shiftheading num', 'Add <num> to heading level.') do |v|
   heading = v
 end
 
