@@ -22,6 +22,23 @@ local fig_num = 0
 local note_num = 0
 local footnotes = {}
 
+-- internal
+local metadata = nil
+local stringify = (require "pandoc.utils").stringify
+
+local function try_catch(what)
+  -- ref: http://bushimichi.blogspot.com/2016/11/lua-try-catch.html
+  local status, result = pcall(what.try)
+  if not status then
+    what.catch(result)
+  end
+  return result
+end
+
+local function log(s)
+  io.stderr:write(s)
+end
+
 local function surround_inline(s)
   if (string.match(s, "{") or string.match(s, "}")) then
     if (string.match(s, "%$")) then -- use % for regexp escape
@@ -323,10 +340,60 @@ function RawBlock(format, text)
   return text
 end
 
+try_catch {
+  try = function()
+    metadata = PANDOC_DOCUMENT.meta
+  end,
+  catch = function(error)
+    log("Due to your pandoc version is too old, config.yml loader is disabled.\n")
+  end
+}
+
+if (metadata) then
+  -- Load config from YAML
+  if (metadata.pandoc2review and metadata.pandoc2review.use_header_id) then
+    if (stringify(metadata.pandoc2review.use_header_id) == "false") then
+      config.use_header_id = nil
+    end
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.use_hr) then
+    if (stringify(metadata.pandoc2review.use_hr) == "false") then
+      config.use_hr = nil
+    end
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.use_table_align) then
+    if (stringify(metadata.pandoc2review.use_table_align) == "false") then
+      config.use_table_align = nil
+    end
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.bold) then
+    config.bold = stringify(metadata.pandoc2review.bold)
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.italic) then
+    config.italic = stringify(metadata.pandoc2review.italic)
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.code) then
+    config.code = stringify(metadata.pandoc2review.code)
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.strike) then
+    config.strike = stringify(metadata.pandoc2review.strike)
+  end
+
+  if (metadata.pandoc2review and metadata.pandoc2review.lineblock) then
+    config.lineblock = stringify(metadata.pandoc2review.lineblock)
+  end
+end
+
 local meta = {}
 meta.__index =
   function(_, key)
-    io.stderr:write(string.format("WARNING: Undefined function '%s'\n", key))
+    log(string.format("WARNING: Undefined function '%s'\n", key))
     return function() return "" end
   end
 
