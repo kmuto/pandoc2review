@@ -21,3 +21,7 @@ pandoc -t review.lua --lua-filter nestedlist.lua inputfile > file.re
 Copyright 2020 Kenshi Muto
 
 GNU General Public License Version 2
+
+## Special Thanks
+- [@atusy](https://github.com/atusy)
+- [@niszet](https://github.com/niszet)
