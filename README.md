@@ -7,17 +7,17 @@ Re:VIEW Filter/Writer for Pandoc. You can convert any document to Re:VIEW format
 For Markdown:
 
 ```
-pandoc -f markdown-auto_identifiers -t review.lua --lua-filter nestedlist.lua file.md > file.re
+pandoc2review.rb file.md > file.re
 ```
 
 For other files (such as Microsoft docx):
 
 ```
-pandoc -t review.lua --lua-filter nestedlist.lua inputfile > file.re
+pandoc2review.rb file > file.re
 ```
 
-## Options (of pandoc)
-- `--shift-heading-level-by=<num>`: Add <num> to heading level. (pandoc >= 2.8)
+## Options
+- `--heading <num>`: Add <num> to heading level. (pandoc >= 2.8)
 
 ## Copyright
 
