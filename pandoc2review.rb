@@ -31,7 +31,7 @@ ARGV.each do |file|
   args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'nestedlist.lua'), '--lua-filter', File.join(bindir, 'strong.lua')]
 
   if file =~ /\.md$/i
-    args += ['-f', 'markdown-auto_identifiers']
+    args += ['-f', 'markdown-auto_identifiers-smart']
   end
 
   if heading
