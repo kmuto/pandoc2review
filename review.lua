@@ -1,6 +1,6 @@
 -- Re:VIEW Writer for Pandoc
 -- Copyright 2020 Kenshi Muto
--- Usage: pandoc -t review.lua --lua-filter nestedlist.lua file.md > file.re
+-- Usage: pandoc -f markdown-auto_identifiers -t review.lua --lua-filter nestedlist.lua file.md > file.re
 
 -- config
 local config = {
