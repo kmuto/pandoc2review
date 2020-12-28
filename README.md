@@ -1,6 +1,12 @@
 # pandoc2review
 
-Re:VIEW Filter/Writer for Pandoc. You can convert any document to Re:VIEW format file using Pandoc and this filter.
+**pandoc2review** is Re:VIEW Filter/Writer for Pandoc. You can convert any documents to Re:VIEW format files using Pandoc and this filter.
+
+## Installation
+
+1. Setup [Ruby](https://www.ruby-lang.org/) (any versions) and [Pandoc](https://pandoc.org/) (newer is better).
+2. Clone this repository, or download release file and extract somewhere.
+3. (Optional) Modify PATH environment variable to point the extracted `pandoc2review` folder, to ease to call `pandoc2review.rb` command without its absolute path.
 
 ## Usage
 
@@ -10,7 +16,7 @@ For Markdown:
 pandoc2review.rb file.md > file.re
 ```
 
-For other files (such as Microsoft docx):
+For other files (such as Microsoft docx, LaTeX, etc.):
 
 ```
 pandoc2review.rb file > file.re
@@ -28,3 +34,6 @@ GNU General Public License Version 2
 ## Special Thanks
 - [@atusy](https://github.com/atusy)
 - [@niszet](https://github.com/niszet)
+
+## Changelog
+TBD.
