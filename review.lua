@@ -256,19 +256,9 @@ function BlockQuote(s)
 end
 
 function CodeBlock(s, attr)
-  local caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
-  local identifier = ""
-  local em = ""
-  if (caption ~= "") then
-    list_num = list_num + 1
-    identifier = "[list" .. list_num .. "]"
-  else
-    em = "em"
-  end
-
   local classes = attr_classes(attr)
   local lang = ""
-  local not_lang = {numberLines = true, num = true}
+  local not_lang = {numberLines = true, num = true, em = true}
   not_lang["number-lines"] = true
   for key,_ in pairs(classes) do
     if not_lang[key] ~= true then
@@ -285,10 +275,20 @@ function CodeBlock(s, attr)
     for _, key in ipairs({"startFrom", "start-from", "firstlinenum"}) do
       firstlinenum = attr_val(attr, key)
       if firstlinenum ~= "" then
-        tag = "//firstlinenum[" .. firstlinenum .. "]\n"
+        firstlinenum = "//firstlinenum[" .. firstlinenum .. "]\n"
         break
       end
     end
+  end
+
+  local caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
+  local identifier = ""
+  local em = classes["em"] and "em" or ""
+  if (caption ~= "") then
+    list_num = list_num + 1
+    identifier = "[list" .. list_num .. "]"
+  else
+    em = "em"
   end
 
   return string.format(
