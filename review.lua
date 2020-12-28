@@ -1,6 +1,6 @@
--- Re:VIEW Filter for Pandoc
+-- Re:VIEW Writer for Pandoc
 -- Copyright 2020 Kenshi Muto
--- Usage: pandoc -t review.lua  file.md > file.re
+-- Usage: pandoc -t review.lua --lua-filter nestedlist.lua file.md > file.re
 
 -- counter
 local table_num = 0
@@ -113,7 +113,6 @@ function HorizontalRule()
 end
 
 function BulletList(items)
-  -- FIXME: ネストの判定はどうしたらよいのだろう
   local buffer = {}
   for _, item in pairs(items) do
     if (item == "//beginchild") or (item == "//endchild") then
@@ -126,7 +125,6 @@ function BulletList(items)
 end
 
 function OrderedList(items, start)
-  -- FIXME: ネストの判定はどうしたらよいのだろう
   local buffer = {}
   local n = start
   for _, item in pairs(items) do
