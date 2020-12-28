@@ -1,6 +1,6 @@
--- Re:VIEW Filter for Pandoc
+-- Re:VIEW Writer for Pandoc
 -- Copyright 2020 Kenshi Muto
--- Usage: pandoc -t review.lua  file.md > file.re
+-- Usage: pandoc -t review.lua --lua-filter nestedlist.lua file.md > file.re
 
 -- config
 local config = {
@@ -132,21 +132,27 @@ function HorizontalRule()
 end
 
 function BulletList(items)
-  -- FIXME: ネストの判定はどうしたらよいのだろう
   local buffer = {}
   for _, item in pairs(items) do
-    table.insert(buffer, " * " .. item)
+    if (item == "//beginchild") or (item == "//endchild") then
+      table.insert(buffer, item)
+    else
+      table.insert(buffer, " * " .. item)
+    end
   end
   return table.concat(buffer, "\n")
 end
 
 function OrderedList(items, start)
-  -- FIXME: ネストの判定はどうしたらよいのだろう
   local buffer = {}
   local n = start
   for _, item in pairs(items) do
-    table.insert(buffer, " " .. n .. ". " .. item)
-    n = n + 1
+    if (item == "//beginchild") or (item == "//endchild") then
+      table.insert(buffer, item)
+    else
+      table.insert(buffer, " " .. n .. ". " .. item)
+      n = n + 1
+    end
   end
   return table.concat(buffer, "\n")
 end
@@ -155,7 +161,11 @@ function DefinitionList(items)
   local buffer = {}
   for _, item in pairs(items) do
     for k, v in pairs(item) do
-      table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
+      if (item == "//beginchild") or (item == "//endchild") then
+        table.insert(buffer, item)
+      else
+        table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
+      end
     end
   end
   return table.concat(buffer, "\n") .. "\n"
