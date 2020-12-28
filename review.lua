@@ -166,16 +166,22 @@ local function attr_val(attr, key)
   return ""
 end
 
+local function attr_classes(attr)
+  local classes = {}
+
+  for cls in attr_val(attr, "class"):gmatch("[^%s]+") do
+    classes[cls] = true
+  end
+  return classes
+end
+
 function Header(level, s, attr)
   local headmark = ""
   for i = 1, level do
     headmark = headmark .. "="
   end
 
-  local classes = {}
-  for cls in attr_val(attr, "class"):gmatch("[^%s]+") do
-    classes[cls] = true
-  end
+  local classes = attr_classes(attr)
 
   headmark = headmark .. (
     -- Re:VIEW's behavior
@@ -250,21 +256,50 @@ function BlockQuote(s)
 end
 
 function CodeBlock(s, attr)
-  tag = "//"
+  local classes = attr_classes(attr)
+  local lang = ""
+  local not_lang = {numberLines = true, num = true, em = true}
+  not_lang["number-lines"] = true
+  for key,_ in pairs(classes) do
+    if not_lang[key] ~= true then
+      lang = "[" .. key .. "]"
+      break
+    end
+  end
 
-  caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
+  local num = (classes["numberLines"] or classes["number-lines"] or classes["num"]
+    ) and "num" or ""
+
+  local firstlinenum = ""
+  if num == "num" then
+    for _, key in ipairs({"startFrom", "start-from", "firstlinenum"}) do
+      firstlinenum = attr_val(attr, key)
+      if firstlinenum ~= "" then
+        firstlinenum = "//firstlinenum[" .. firstlinenum .. "]\n"
+        break
+      end
+    end
+  end
+
+  local caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
+  local identifier = ""
+  local em = classes["em"] and "em" or ""
   if (caption ~= "") then
     list_num = list_num + 1
-    tag = tag .. "list[list" .. list_num .. "][" .. caption .. "]"
+    identifier = "[list" .. list_num .. "]"
+    caption = "[" .. caption .. "]"
   else
-    tag = tag .. "emlist"
+    em = "em"
+    if lang ~= "" then
+      caption = "[" .. caption .. "]"
+    end
   end
 
-  cls = attr_val(attr, "class")
-  if (cls ~= "") then
-    tag = tag .. "[][" .. cls .. "]"
-  end
-  return tag .. "{\n" .. s .. "\n//}"
+  return (
+      firstlinenum ..
+      "//" .. em .. "list" .. num .. identifier .. caption .. lang ..
+      "{\n" .. s .. "\n//}"
+    )
 end
 
 function LineBlock(s)
