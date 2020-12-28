@@ -183,7 +183,7 @@ local function attr_scale(attr, key) -- a helper for CaptionedImage
 
   scale, count = scale:gsub("%%$", "")
   if count == 0 then
-    log("WARNING: units must be % for width and height attributes of Image.\n")
+    log("WARNING: Units must be % for `" .. key .. "` of Image. Ignored.\n")
     return ""
   end
 
