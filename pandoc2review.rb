@@ -28,7 +28,7 @@ ARGV.each do |file|
     puts "#{file} not exist. skip."
     next
   end
-  args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'nestedlist.lua')]
+  args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'nestedlist.lua'), '--lua-filter', File.join(bindir, 'strong.lua')]
 
   if file =~ /\.md$/i
     args += ['-f', 'markdown-auto_identifiers']
