@@ -2,6 +2,19 @@
 -- Copyright 2020 Kenshi Muto
 -- Usage: pandoc -t review.lua  file.md > file.re
 
+-- config
+local config = {
+  use_header_id = "true",
+  use_hr = "true",
+  use_table_align = "true",
+
+  bold = "b",
+  italic = "i",
+  code = "tt",
+  strike = "u", -- XXX: Re:VIEW doesn't support <strike>
+  lineblock = "source", --- XXX: Re:VIEW doesn't provide poem style by default
+}
+
 -- counter
 local table_num = 0
 local list_num = 0
@@ -95,7 +108,6 @@ function Header(level, s, attr)
     headmark = headmark .. "="
   end
 
-  -- FIXME: id明示指定があれば使うようにしたいが、pandocは暗黙にヘッダベースのidもつっこんできて区別できなくて困る…
   cls = attr_val(attr, "class")
   if (cls ~= "") then
     if (cls == "unnumbered") then
@@ -104,12 +116,19 @@ function Header(level, s, attr)
     headmark = headmark .. "[" .. cls .. "]"
   end
 
+  if (config.use_header_id and attr.id ~= "" and attr.id ~= s) then
+    headmark = headmark .. "{" .. attr.id .. "}"
+  end
+
   return headmark .. " " .. s
 end
 
 function HorizontalRule()
-  -- FIXME: 無視するフラグがほしい？
-  return "//hr"
+  if (config.use_hr) then
+    return "//hr"
+  else
+    return ""
+  end
 end
 
 function BulletList(items)
@@ -142,7 +161,6 @@ function DefinitionList(items)
   return table.concat(buffer, "\n") .. "\n"
 end
 
-
 function BlockQuote(s)
   return "//quote{\n" .. s .. "\n//}"
 end
@@ -159,7 +177,7 @@ end
 
 function LineBlock(s)
   -- | block. FIXME://source代替でよいか
-  return "//source{\n" .. table.concat(s, "\n") .. "\n//}"
+  return "//" .. config.lineblock .. "{\n" .. table.concat(s, "\n") .. "\n//}"
 end
 
 function Link(s, src, tit)
@@ -173,21 +191,20 @@ end
 
 function Code(s, attr)
   -- ignore attr
-  return "@<tt>" .. surround_inline(s)
+  return "@<" .. config.code .. ">" .. surround_inline(s)
 end
 
 function Emph(s)
-  return "@<i>" .. surround_inline(s)
+  return "@<" .. config.italic .. ">" .. surround_inline(s)
 end
 
 function Strong(s)
   -- FIXME: ___ とすると Strong(Emph)、つまり @<b>$@<i>{ITBOLD}$ が産まれてしまう…
-  return "@<b>" .. surround_inline(s)
+  return "@<" .. config.bold .. ">" .. surround_inline(s)
 end
 
 function Strikeout(s)
-  -- XXX: Re:VIEW doesn't provide <strike>. set @<u> for alternative
-  return "@<u>" .. surround_inline(s)
+  return "@<" .. config.strike .. ">" .. surround_inline(s)
 end
 
 function Subscript(s)
@@ -220,7 +237,7 @@ function Table(caption, aligns, widths, headers, rows)
   local tmp = {}
   for i, h in pairs(headers) do
     align = html_align(aligns[i])
-    if (align ~= "") then
+    if (config.use_table_align and align ~= "") then
       h = "@<dtp>{table align=" .. align .. "}" .. h
     end
     table.insert(tmp, h)
@@ -231,7 +248,7 @@ function Table(caption, aligns, widths, headers, rows)
     tmp = {}
       for i, c in pairs(row) do
       align = html_align(aligns[i])
-      if (align ~= "") then
+      if (config.use_table_align and align ~= "") then
         c = "@<dtp>{table align=" .. align .. "}" .. c
       end
       table.insert(tmp, c)
