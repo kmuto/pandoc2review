@@ -103,7 +103,7 @@ local function attr_val(attr, key)
 end
 
 function Header(level, s, attr)
-  headmark = "" -- FIXME: オプションで=の数を追加設定できるようにしたい
+  headmark = ""
   for i = 1, level do
     headmark = headmark .. "="
   end

@@ -16,6 +16,9 @@ For other files (such as Microsoft docx):
 pandoc -t review.lua --lua-filter nestedlist.lua inputfile > file.re
 ```
 
+## Options (of pandoc)
+- `--shift-heading-level-by=<num>`: Add <num> to heading level. (pandoc >= 2.8)
+
 ## Copyright
 
 Copyright 2020 Kenshi Muto
