@@ -177,14 +177,15 @@ function Header(level, s, attr)
     classes[cls] = true
   end
 
-  headmark = string.format("%s[%s]", headmark,
+  headmark = headmark .. (
     -- Re:view's behavior
-    classes["column"] and "column" or (
-    classes["nonum"] and "nonum" or (
-    classes["nodisp"] and "nodisp" or (
-    classes["notoc"] and "notoc" or (
+    classes["column"] and "[column]" or (
+    classes["nonum"] and "[nonum]" or (
+    classes["nodisp"] and "[nodisp]" or (
+    classes["notoc"] and "[notoc]" or (
     -- Pandoc's behavior
-    classes["unnumbered"] and (classes["unlisted"] and "notoc" or "nonum") or (
+    classes["unnumbered"] and (
+      classes["unlisted"] and "[notoc]" or "[nonum]") or (
     -- None
     "")))))
   )
