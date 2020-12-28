@@ -485,7 +485,7 @@ end
 local meta = {}
 meta.__index =
   function(_, key)
-    log(string.format('WARNING: Undefined function "%s"\n', key))
+    log(string.format("WARNING: Undefined function '%s'\n", key))
     return function() return "" end
   end
 
