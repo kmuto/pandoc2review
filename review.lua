@@ -227,6 +227,12 @@ function HorizontalRule()
   end
 end
 
+local function lint_list(s)
+  return s:gsub("\n+(//beginchild)\n+", '\n\n%1\n\n'
+         ):gsub("\n+(//endchild)\n+", '\n\n%1\n\n'
+         ):gsub("\n+(//endchild)$", "\n\n%1")
+end
+
 function BulletList(items)
   local buffer = {}
   for _, item in pairs(items) do
@@ -236,7 +242,7 @@ function BulletList(items)
       table.insert(buffer, " * " .. item)
     end
   end
-  return table.concat(buffer, "\n\n")
+  return lint_list(table.concat(buffer, "\n"))
 end
 
 function OrderedList(items, start)
@@ -250,18 +256,14 @@ function OrderedList(items, start)
       n = n + 1
     end
   end
-  return table.concat(buffer, "\n")
+  return lint_list(table.concat(buffer, "\n"))
 end
 
 function DefinitionList(items)
   local buffer = {}
   for _, item in pairs(items) do
     for k, v in pairs(item) do
-      if (item == "//beginchild") or (item == "//endchild") then
-        table.insert(buffer, item)
-      else
-        table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
-      end
+      table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
     end
   end
   return table.concat(buffer, "\n") .. "\n"

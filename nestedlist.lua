@@ -1,25 +1,25 @@
-beginchild = pandoc.Plain({pandoc.Str('//beginchild')})
-endchild = pandoc.Plain({pandoc.Str('//endchild')})
-tags_list = {
-  BulletList = true,
-  OrderedList = true,
-  DefinitionList = true
-}
+local beginchild = {pandoc.Plain(pandoc.Str('//beginchild'))}
+local endchild = {pandoc.Plain(pandoc.Str('//endchild'))}
 
-function nestablelist(elem, tag)
-  for _, blocks in ipairs(elem.content) do
-    local i_child = {}
-    for i,v in ipairs(blocks) do
-      if tags_list[v.tag] then
-        table.insert(i_child, i)
+local function nestablelist(elem)
+  --[[
+    If a list nests blocks, wrap them with special bullet list items, i.e., 
+    `* //beginchild` and `* //endchild`.
+    Subsequently, `review.lua` turns the items into commands.
+  ]]
+  for _, block in ipairs(elem.content) do
+    if block[2] then
+      if block[2].tag == "BulletList" then
+        table.insert(block[2].content, 1, beginchild)
+      else
+        table.insert(block, 2, pandoc.BulletList(beginchild))
       end
-    end
 
-    local i_add = 0
-    for _, i in ipairs(i_child) do
-      table.insert(blocks, i + i_add, beginchild)
-      table.insert(blocks, i + i_add + 2, endchild)
-      i_add = i_add + 2
+      if block[#block].tag == "BulletList" then
+        table.insert(block[#block].content, endchild)
+      else
+        table.insert(block, pandoc.BulletList(endchild))
+      end
     end
   end
   return elem
