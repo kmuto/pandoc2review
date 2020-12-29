@@ -2,8 +2,11 @@
 require 'test_helper'
 
 class ReviewLuaTest < Test::Unit::TestCase
-  def pandoc(src)
+  def pandoc(src, opts=nil)
     args = 'pandoc -t review.lua --lua-filter=nestedlist.lua --lua-filter=strong.lua -f markdown-auto_identifiers-smart'
+    if opts
+      args += ' ' + opts
+    end
     stdout, status = Open3.capture2(args, stdin_data: src)
     stdout
   end
@@ -70,19 +73,27 @@ EOB
   end
 
   def test_inline_font
+    src = 'This is * not emphasized *, and \*neither is this\*.'
+    assert_equal 'This is * not emphasized *, and *neither is this*.', pandoc(src).chomp
     src = '*a* _a_'
     assert_equal '@<i>{a} @<i>{a}', pandoc(src).chomp
     src = '**a** __a__'
     assert_equal '@<b>{a} @<b>{a}', pandoc(src).chomp
     src = '***a*** ___a___'
     assert_equal '@<strong>{a} @<strong>{a}', pandoc(src).chomp
+    src = 'H~2~O is a liquid. 2^10^ is 1024.'
+    assert_equal 'H@<sub>{2}O is a liquid. 2@<sup>{10} is 1024.', pandoc(src).chomp
     src = '`a`'
     assert_equal '@<tt>{a}', pandoc(src).chomp
-    src = '`a`'
-    assert_equal '@<tt>{a}', pandoc(src).chomp
+    src = '`a\*`'
+    assert_equal '@<tt>{a\*}', pandoc(src).chomp
+    src = '`<$>`{.haskell}'
+    assert_equal '@<tt>{<$>}', pandoc(src).chomp # XXX: ignore attribute
     src = '~~a~~'
     assert_equal '@<u>{a}', pandoc(src).chomp # XXX: Re:VIEW doesn't support strikeout
-    # FIXME: more?
+    src = '[Small]{.smallcaps}'
+    assert_equal '◆→SMALLCAPS:Small←◆', pandoc(src).chomp
+    # FIXME: more? underline?
   end
 
   def test_heading
@@ -272,13 +283,222 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_lineblock
+    src = <<-EOB
+| The Right Honorable Most Venerable and Righteous Samuel L.
+  Constable, Jr.
+| 200 Main St.
+| Berkeley, CA 94718
+EOB
+
+    expected = <<-EOB
+//source{
+The Right Honorable Most Venerable and Righteous Samuel L. Constable, Jr.
+200 Main St.
+Berkeley, CA 94718
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_itemize
+    src = <<-EOB
+ * one
+ * two
+
+ + one
+ + two
+
+ - one
+ - two
+ - [ ] checked
+EOB
+
+    expected = <<-EOB
+ * one
+ * two
+ * one
+ * two
+ * one
+ * two
+ * ☐ check
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+* here is my first
+  list item.
+* and my second
+list item.
+EOB
+
+    expected = <<-EOB
+ * here is my firstlist item.
+ * and my secondlist item.
+EOB
+    # XXX: space will be removed.
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+* First paragraph.
+
+  Continued.
+
+* Second paragraph. With a code block, which must be indented
+  eight spaces:
+
+      { code }
+EOB
+
+    expected = <<-EOB
+ * First paragraph.
+
+Continued.
+ * Second paragraph. With a code block, which must be indentedeight spaces:
+
+//emlist{
+{ code }
+//}
+EOB
+    # XXX: pandoc2review can't handle child elements at this time.
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+* fruits
+  + apples
+    - macintosh
+    - red delicious
+  + pears
+  + peaches
+* vegetables
+  + broccoli
+  + chard
+EOB
+
+   expected = <<-EOB
+ * fruits
+
+//beginchild
+
+ * apples
+
+//beginchild
+
+ * macintosh
+ * red delicious
+
+//endchild
+ * pears
+ * peaches
+
+//endchild
+ * vegetables
+
+//beginchild
+
+ * broccoli
+ * chard
+
+//endchild
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_enumerate
+    src = <<-EOB
+ 1. one
+ 2. two
+
+Reverse
+
+ 2. one
+ 1. two
+EOB
+
+    expected = <<-EOB
+ 1. one
+ 2. two
+
+Reverse
+
+ 2. one
+ 3. two
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+ #. one
+ #. two
+EOB
+
+    expected = <<-EOB
+ 1. one
+ 2. two
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+ #. one
+    #. one-one
+    #. one-two
+ #. two
+EOB
+
+    expected = <<-EOB
+ 1. one
+
+//beginchild
+
+ 1. one-one
+ 2. one-two
+
+//endchild
+ 2. two
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+ 9) one
+ 10) two
+    i. subone
+   ii. subtwo
+EOB
+
+    expected = <<-EOB
+ 9. one
+ 10. twoi. subone
+
+ 2. subtwo
+EOB
+    # XXX: pandoc2review can't handle nested enumerate. Re:VIEW doesn't care paren number and roman number enumerate by default also.
+    assert_equal expected, pandoc(src)
+  end
+
   def test_horizontalrule
     src = <<-EOB
 ---
 
 * * *
 
+__ __
 EOB
+
+    expected = <<-EOB
+//hr
+
+//hr
+
+//hr
+EOB
+
+    assert_equal expected, pandoc(src)
   end
 
   def test_image
