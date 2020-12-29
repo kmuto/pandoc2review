@@ -147,7 +147,6 @@ end
 
 function SoftBreak(s)
   return "◆→__P2RBR__←◆"
-  -- return " "
 end
 
 function Plain(s)

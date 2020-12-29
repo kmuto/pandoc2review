@@ -9,10 +9,10 @@ class ReviewLuaTest < Test::Unit::TestCase
     end
     if err
       stdout, stderr, status = Open3.capture3(args, stdin_data: src)
-      return stdout, stderr
+      return softbreak(stdout), stderr
     else
       stdout, status = Open3.capture2(args, stdin_data: src)
-      stdout
+      softbreak(stdout)
     end
   end
 
@@ -49,9 +49,11 @@ is a pen.
 文字
 12
 漢字
+ABC?
+あ
 EOB
     expected = <<-EOB
-Is This a pen? Yes, This is a pen.日本語文字12漢字
+Is This a pen? Yes, This is a pen.日本語文字12漢字ABC?あ
 EOB
     assert_equal expected, pandoc(src)
   end

@@ -8,6 +8,7 @@ test_dir = File.join(base_dir, 'test')
 require 'simplecov'
 SimpleCov.start
 require 'test/unit'
+require_relative '../pandoc2review-lib'
 
 argv = ARGV || ['--max-diff-target-string-size=10000']
 exit Test::Unit::AutoRunner.run(true, test_dir, argv)
