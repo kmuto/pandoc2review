@@ -108,3 +108,86 @@ A block quote within a block quote
 - `.em` を付けると、`caption` があっても `//emlist` または `//emlistnum` を強制し、キャプション付き採番なしコードリストとします。`#ID` は無視されます。
 - `.cmd` を付けると `//cmd` コードリスト、`.source` を付けると `//source` コードリストになります。
 - それ以外のクラス名は、ハイライト言語と見なします。
+
+```
+~~~
+if (a > 3) {
+  moveShip(5 * gravity, DOWN);
+}
+~~~
+↓
+//emlist{
+if (a > 3) {
+  moveShip(5 * gravity, DOWN);
+}
+//}
+
+~~~ {#mycode .haskell .numberLines startFrom="100"}
+qsort []     = []
+~~~
+↓
+//firstlinenum[100]
+//emlistnum[][haskell]{
+qsort []     = []
+//}
+
+~~~haskell
+qsort []     = []
+~~~
+↓
+//emlist[][haskell]{
+qsort []     = []
+//}
+
+~~~ {caption="QSORT"}
+qsort []     = []
+~~~
+↓
+//list[list1][QSORT]{
+qsort []     = []
+//}
+
+~~~ {caption="QSORT" #foo .numberLines}
+qsort []     = []
+~~~
+↓
+//listnum[foo][QSORT]{
+qsort []     = []
+//}
+
+~~~ {caption="QSORT" #ignoredid .em .haskell}
+qsort []     = []
+~~~
+↓
+//emlist[QSORT][haskell]{
+qsort []     = []
+//}
+```
+
+## ラインブロック
+
+## リスト
+
+## 水平線
+
+## 表
+
+## メタデータブロック
+
+## インライン修飾
+
+## 数式
+
+## 生のHTML
+
+## LaTeX マクロ
+
+## リンク
+
+## 画像
+
+## Div と Span
+
+## 脚注
+
+## 引用文献

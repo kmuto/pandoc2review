@@ -25,7 +25,7 @@ three
 four
 EOB
 
-    # pandoc2review ignores softbreak
+    # XXX: pandoc2review ignores softbreak
     expected = <<-EOB
 onetwo
 
@@ -41,7 +41,7 @@ is a pen.
 日本語
 文字
 EOB
-    # pandoc Markdown doesn't care about lexical issue, just do trimming spaces and joining.
+    # XXX: pandoc Markdown doesn't care about lexical issue, just do trimming spaces and joining.
     expected = <<-EOB
 Is Thisa pen?Yes, Thisis a pen.日本語文字
 EOB
@@ -81,8 +81,8 @@ EOB
     src = '`a`'
     assert_equal '@<tt>{a}', pandoc(src).chomp
     src = '~~a~~'
-    assert_equal '@<u>{a}', pandoc(src).chomp # Re:VIEW doesn't support strikeout
-    # TODO: more?
+    assert_equal '@<u>{a}', pandoc(src).chomp # XXX: Re:VIEW doesn't support strikeout
+    # FIXME: more?
   end
 
   def test_heading
@@ -107,7 +107,7 @@ EOB
     src = '###### H'
     assert_equal '====== H', pandoc(src).chomp
     src = '####### H'
-    assert_equal '======= H', pandoc(src).chomp # pandoc2review prefers to force a conversion rather than make an error.
+    assert_equal '======= H', pandoc(src).chomp # XXX: pandoc2review prefers to force a conversion rather than make an error.
     src = '## H {-}'
     assert_equal '==[nonum] H', pandoc(src).chomp
     src = '## H {.unnumbered}'
@@ -279,5 +279,25 @@ EOB
 * * *
 
 EOB
+  end
+
+  def test_image
+    src = '![](lalune.jpg)'
+    assert_equal "//indepimage[lalune]{\n//}", pandoc(src).chomp
+    src = '![La Lune](lalune.jpg)'
+    assert_equal "//image[lalune][La Lune]{\n//}", pandoc(src).chomp
+    src = '![La Lune](lalune.jpg "Le Voyage dans la Lune")'
+    assert_equal "//image[lalune][La Lune]{\nLe Voyage dans la Lune\n//}", pandoc(src).chomp
+    src = 'This is ![](lalune.jpg) image.'
+    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp
+    src = 'This is ![La Lune](lalune.jpg) image.'
+    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
+    src = 'This is ![La Lune](lalune.jpg "Le Voyage dans la Lune") image.'
+    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
+    src = '![](./images/baz/foo.bar.lalune.jpg)'
+    assert_equal "//indepimage[./baz/foo.bar.lalune]{\n//}", pandoc(src).chomp
+    src = '![](a b.jpg)'
+    assert_equal "//indepimage[a%20b]{\n//}", pandoc(src).chomp # XXX: This result seems not our expectations... However, Re:VIEW eventually rejects filenames with spaces. So? Don't care about this :)
+    # FIXME: more (scale)
   end
 end

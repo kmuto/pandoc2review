@@ -178,6 +178,20 @@ H~2~O は液体です。2^10^ は 1024 です。
 
 ![](./images/hoge.lalune.jpg)
 
+![](path.png)
+
+![title](path.png)
+
+![title](path.png){scale=0.5}
+
+![title](path.png){width=50%}
+
+![title](path.png){height=50%}
+
+![title](path.png){width=30}
+
+![title](path.png){width=30% height=50%}
+
 文中の ![](lalune.jpg) というもの。
 
 これは脚注の参照です[^1]、 そしてもう1つ[^longnote]。
