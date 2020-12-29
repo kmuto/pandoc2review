@@ -322,7 +322,7 @@ EOB
  * two
  * one
  * two
- * ☐ check
+ * ☐ checked
 EOB
 
     assert_equal expected, pandoc(src)
