@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 -- Re:VIEW Writer for Pandoc
 -- Copyright 2020 Kenshi Muto
 -- Usage: pandoc -f markdown-auto_identifiers -t review.lua --lua-filter nestedlist.lua file.md > file.re
@@ -145,8 +146,8 @@ function LineBreak()
 end
 
 function SoftBreak(s)
-  -- FIXME: can I check the character type before/after this break?
-  return ""
+  return "◆→__P2RBR__←◆"
+  -- return " "
 end
 
 function Plain(s)
