@@ -363,7 +363,7 @@ Continued.
 { code }
 //}
 EOB
-    # XXX: pandoc2review can't handle child elements at this time.
+    # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
 
     src = <<-EOB
@@ -477,7 +477,61 @@ EOB
 
  2. subtwo
 EOB
-    # XXX: pandoc2review can't handle nested enumerate. Re:VIEW doesn't care paren number and roman number enumerate by default also.
+    # XXX: pandoc2review can't handle nested elements except list. Re:VIEW doesn't care paren number and roman number enumerate by default also.
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_definition
+    src = <<-EOB
+Term 1
+
+:   Definition 1
+
+Term 2 with *inline markup*
+
+:   Definition 2
+
+        { some code, part of Definition 2 }
+
+    Third paragraph of definition 2.
+EOB
+
+    expected = <<-EOB
+ : Term 1
+	Definition 1
+ : Term 2 with @<i>{inline markup}
+	Definition 2
+
+//emlist{
+{ some code, part of Definition 2 }
+//}
+
+Third paragraph of definition 2.
+EOB
+    # XXX: pandoc2review can't handle nested elements except list.
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+Term 1
+  ~ Definition 1
+
+Term 2
+  ~ Definition 2a
+  ~ Definition 2b
+EOB
+
+    expected = <<-EOB
+ : Term 1
+	Definition 1
+ : Term 2
+	Definition 2a
+Definition 2b
+EOB
+    # FIXME: this result is broken for Re:VIEW.
+    # Definition 2a@<br>{}Definition 2b
+    #  or
+    # Definition 2a@<br>{}\nDefinition 2b
+    # is expected.
     assert_equal expected, pandoc(src)
   end
 
@@ -496,6 +550,112 @@ EOB
 //hr
 
 //hr
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_table
+    src = <<-EOB
+  Right     Left     Center     Default
+-------     ------ ----------   -------
+     12     12        12            12
+    123     123       123          123
+      1     1          1             1
+
+Table:  Demonstration of simple table syntax.
+EOB
+
+    expected = <<-EOB
+//table[table1][Demonstration of simple table syntax.]{
+@<dtp>{table align=right}Right	Left	@<dtp>{table align=center}Center	Default
+--------------
+@<dtp>{table align=right}12	12	@<dtp>{table align=center}12	12
+@<dtp>{table align=right}123	123	@<dtp>{table align=center}123	123
+@<dtp>{table align=right}1	1	@<dtp>{table align=center}1	1
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+-------     ------ ----------   -------
+     12     12        12             12
+    123     123       123           123
+      1     1          1              1
+-------     ------ ----------   -------
+EOB
+
+    expected = <<-EOB
+//table{
+
+--------------
+@<dtp>{table align=right}12	12	@<dtp>{table align=center}12	@<dtp>{table align=right}12
+@<dtp>{table align=right}123	123	@<dtp>{table align=center}123	@<dtp>{table align=right}123
+@<dtp>{table align=right}1	1	@<dtp>{table align=center}1	@<dtp>{table align=right}1
+//}
+EOB
+    # FIXME: remove empty line?
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+----------- ------- --------------- -------------------------
+   First    row                12.0 Example of a row that
+                                    spans multiple lines.
+
+  Second    row                 5.0 Here's another one.
+----------- ------- --------------- -------------------------
+EOB
+
+    expected = <<-EOB
+//table{
+
+--------------
+@<dtp>{table align=center}First	row	@<dtp>{table align=right}12.0	Example of a row thatspans multiple lines.
+@<dtp>{table align=center}Second	row	@<dtp>{table align=right}5.0	Here's another one.
+//}
+EOB
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+: Sample grid table.
+
++---------------+---------------+--------------------+
+| Fruit         | Price         | Advantages         |
++===============+===============+====================+
+| Bananas       | $1.34         | - built-in wrapper |
+|               |               | - bright color     |
++---------------+---------------+--------------------+
+EOB
+
+    expected = <<-EOB
+//table[table1][Sample grid table.]{
+Fruit	Price	Advantages
+--------------
+Bananas	$1.34	 * built-in wrapper
+ * bright color
+//}
+EOB
+    # XXX: Re:VIEW can't handle block in cell
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+fruit| price
+-----|-----:
+apple|2.05
+pear|1.37
+orange|3.09
+EOB
+
+    expected = <<-EOB
+//table{
+fruit	@<dtp>{table align=right}price
+--------------
+apple	@<dtp>{table align=right}2.05
+pear	@<dtp>{table align=right}1.37
+orange	@<dtp>{table align=right}3.09
+//}
 EOB
 
     assert_equal expected, pandoc(src)
