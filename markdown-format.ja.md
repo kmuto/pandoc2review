@@ -293,10 +293,6 @@ block @<m>$\\displaystyle{}e^{pi i}= -1$
 
 TeX の追加マクロは、利用する Re:VIEW プロジェクトフォルダの sty/review-custom.sty に記述することで利用できます。
 
-## 生のHTML
-
-★
-
 ## リンク
 
 自動リンク、インラインリンクは `@<href>` に変換されます。
@@ -423,8 +419,53 @@ bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq
 
 ## 脚注
 
-★
+脚注の参照箇所は `@<fn>` となり、fn1、fn2、…と採番されます。
+
+脚注内容はドキュメント末尾に置かれます。
+
+Re:VIEW における `//footnote` は1行で形成されることを想定しており、複数行・要素からなる脚注はそのままでは表現できません。そのため、そのような脚注は Re:VIEW コンパイル時にエラーになります。
+
+```
+Here is a footnote reference,[^1] and another.[^longnote]
+
+[^1]: Here is the footnote.
+
+[^longnote]: Here's one with multiple blocks.
+
+    Subsequent paragraphs are indented to show that they
+belong to the previous footnote.
+
+        { some.code }
+
+    The whole paragraph can be indented, or just the first
+    line.  In this way, multi-paragraph footnotes work like
+    multi-paragraph list items.
+
+This paragraph won't be part of the note, because it
+isn't indented.
+
+↓
+
+Here is a footnote reference,@<fn>{fn1} and another.@<fn>{fn2}
+
+This paragraph won't be part of the note, because itisn't indented.
+
+//footnote[fn1][Here is the footnote.] ←脚注はドキュメント末尾に置かれる
+//footnote[fn2][Here's one with multiple blocks.  ←複数行からなる脚注はRe:VIEWコンパイル時にエラー
+
+Subsequent paragraphs are indented to show that theybelong to the previous footnote.
+
+//emlist{
+{ some.code }
+//}
+
+The whole paragraph can be indented, or just the firstline. In this way, multi-paragraph footnotes work likemulti-paragraph list items.]
+```
 
 ## 引用文献
+
+`@` は Twitter ID などの地の文で使うことのほうが一般的であると思われるため、pandoc2review では Citation (引用文献) 機能を使いません。リテラルに `@` を出力します。(★)
+
+## 生のHTML
 
 ★

@@ -686,6 +686,47 @@ EOB
     assert_equal '@<ruby>{麺麭,パン}', pandoc(src).chomp
   end
 
+  def test_footnote
+    src = <<-EOB
+Here is a footnote reference,[^1] and another.[^longnote]
+
+[^1]: Here is the footnote.
+
+[^longnote]: Here's one with multiple blocks.
+
+    Subsequent paragraphs are indented to show that they
+belong to the previous footnote.
+
+        { some.code }
+
+    The whole paragraph can be indented, or just the first
+    line.  In this way, multi-paragraph footnotes work like
+    multi-paragraph list items.
+
+This paragraph won't be part of the note, because it
+isn't indented.
+EOB
+
+    expected = <<-EOB
+Here is a footnote reference,@<fn>{fn1} and another.@<fn>{fn2}
+
+This paragraph won't be part of the note, because itisn't indented.
+
+//footnote[fn1][Here is the footnote.]
+//footnote[fn2][Here's one with multiple blocks.
+
+Subsequent paragraphs are indented to show that theybelong to the previous footnote.
+
+//emlist{
+{ some.code }
+//}
+
+The whole paragraph can be indented, or just the firstline. In this way, multi-paragraph footnotes work likemulti-paragraph list items.]
+EOB
+    # FIXME: long footnote is illegal for Re:VIEW
+    assert_equal expected, pandoc(src)
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default
