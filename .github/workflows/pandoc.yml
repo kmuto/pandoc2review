@@ -6,7 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
     - uses: r-lib/actions/setup-pandoc@v1
       with:
         pandoc-version: '2.11.3'
-    - run: pandoc -v
+    - run: |
+        pandoc -v
