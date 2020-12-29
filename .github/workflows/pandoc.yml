@@ -1,7 +1,5 @@
-name: Test
-on: push
-
 name: Pandoc
+on: push
 
 jobs:
   Pandoc:
