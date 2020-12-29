@@ -555,6 +555,55 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_math
+    src = <<-EOB
+inline $e^{\pi i}= -1$
+
+block $$e^{\pi i}= -1$$
+EOB
+
+    expected = <<-EOB
+inline @<m>$e^{\pi i}= -1$
+
+block @<m>$\\displaystyle{}e^{pi i}= -1$
+EOB
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_link
+    src = <<-EOB
+<https://google.com>,
+<sam@green.eggs.ham>
+
+This is an [inline link](/url), and here's [one with
+a title](https://fsf.org "click here for a good time!").
+
+[Write me!](mailto:sam@green.eggs.ham)
+EOB
+
+    expected = <<-EOB
+@<href>{https://google.com},@<href>{mailto:sam@green.eggs.ham,sam@green.eggs.ham}
+
+This is an @<href>{/url,inline link}, and here's @<href>{https://fsf.org,one witha title}.
+
+@<href>{mailto:sam@green.eggs.ham,Write me!}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+[my label]: https://fsf.org (The free software foundation)
+
+see [my label].
+EOB
+
+    expected = <<-EOB
+see @<href>{https://fsf.org,my label}.
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default

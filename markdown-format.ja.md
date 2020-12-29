@@ -277,19 +277,57 @@ Markdown では指定の順序数値を無視しますが、pandoc2review では
 
 ## 数式
 
-★
+扱えるのは TeX 数式形式のみです。
+
+`$〜$` でインライン表現、`$$〜$$` で独立式表現の数式になります。ただし、独立式表現は単に表現上独立式に見せるために `\displaystyle{}` を付けるだけです。Re:VIEW の独立式用の `//texequation` ブロックになるわけではありません。(★)
+
+```
+inline $e^{\pi i}= -1$
+
+block $$e^{\pi i}= -1$$
+↓
+inline @<m>$e^{\pi i}= -1$
+
+block @<m>$\\displaystyle{}e^{pi i}= -1$
+```
+
+TeX の追加マクロは、利用する Re:VIEW プロジェクトフォルダの sty/review-custom.sty に記述することで利用できます。
 
 ## 生のHTML
 
 ★
 
-## LaTeX マクロ
-
-★
-
 ## リンク
 
-★
+自動リンク、インラインリンクは `@<href>` に変換されます。
+
+```
+<https://google.com>,
+<sam@green.eggs.ham>
+
+This is an [inline link](/url), and here's [one with
+a title](https://fsf.org "click here for a good time!").
+
+[Write me!](mailto:sam@green.eggs.ham)
+↓
+@<href>{https://google.com},@<href>{mailto:sam@green.eggs.ham,sam@green.eggs.ham}
+
+This is an @<href>{/url,inline link}, and here's @<href>{https://fsf.org,one witha title}.
+
+@<href>{mailto:sam@green.eggs.ham,Write me!}
+```
+
+参照リンクも動作します。
+
+```
+[my label]: https://fsf.org (The free software foundation)
+
+see [my label].
+↓
+see @<href>{https://fsf.org,my label}.
+```
+
+章・節・項といった見出しへの内部リンクも `@<href>` になってしまうので、手動で `@<chap>` や `@<hd>` に変更する必要があります。
 
 ## 画像
 
@@ -327,6 +365,14 @@ This is @<icon>{lalune} image.
 
 ## Div と Span
 
+★
+
+//noteなど
+
 ## 脚注
 
+★
+
 ## 引用文献
+
+★

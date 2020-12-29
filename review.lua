@@ -334,8 +334,11 @@ function LineBlock(s)
 end
 
 function Link(s, src, tit)
-  -- FIXME: titを使う可能性はあるか？
-  return format_inline("href", src .. ((src == s) and ("," .. s) or ""))
+  if (src == s) then
+    return format_inline("href", src)
+  else
+    return format_inline("href", src .. "," .. s)
+  end
 end
 
 function Code(s, attr)
@@ -372,7 +375,7 @@ function InlineMath(s)
 end
 
 function DisplayMath(s)
-  return "//texequation{\n" .. s .. "\n//}"
+  return format_inline("m", "\\displaystyle{}" .. s)
 end
 
 function Table(caption, aligns, widths, headers, rows)
