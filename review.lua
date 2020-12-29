@@ -411,7 +411,7 @@ end
 function CaptionedImage(s, src, tit, attr)
   local path = "[" .. s:gsub("%.%w+$", ""):gsub("images/", "") .. "]"
 
-  local comment = src:gsub("fig:", ""):gsub("(.+)", "\n%1\n")
+  local comment = src:gsub("fig:", ""):gsub("(.+)", "\n%1")
 
   local scale = attr_scale(attr, "scale")
   if scale == "" then
@@ -439,7 +439,7 @@ function CaptionedImage(s, src, tit, attr)
   end
 
   return (
-    command .. path .. caption .. scale .. "{" .. comment .. "//}"
+    command .. path .. caption .. scale .. "{" .. comment .. "\n//}"
   )
 end
 
