@@ -845,8 +845,8 @@ EOB
     assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
     src = 'This is ![La Lune](lalune.jpg "Le Voyage dans la Lune") image.'
     assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
-    src = '![](./images/baz/foo.bar.lalune.jpg)'
-    assert_equal "//indepimage[./baz/foo.bar.lalune]{\n//}", pandoc(src).chomp
+    src = '![](images/baz/foo.bar.lalune.jpg)'
+    assert_equal "//indepimage[baz/foo.bar.lalune]{\n//}", pandoc(src).chomp
     src = '![](a b.jpg)'
     assert_equal "//indepimage[a%20b]{\n//}", pandoc(src).chomp # XXX: This result seems not our expectations... However, Re:VIEW eventually rejects filenames with spaces. So? Don't care about this :)
     # FIXME: more (scale)
