@@ -176,6 +176,21 @@ local function attr_classes(attr)
   return classes
 end
 
+local function attr_scale(attr, key) -- a helper for CaptionedImage
+  scale = attr_val(attr, key)
+  if (scale == "") or (key == "scale") then
+    return scale
+  end
+
+  scale, count = scale:gsub("%%$", "")
+  if count == 0 then
+    log("WARNING: Units must be % for `" .. key .. "` of Image. Ignored.\n")
+    return ""
+  end
+
+  return tonumber(scale) / 100
+end
+
 function Header(level, s, attr)
   local headmark = ""
   for i = 1, level do
@@ -418,25 +433,43 @@ end
 function Image(s, src, tit)
   -- Re:VIEW @<icon> ignores caption and title
   local id = string.gsub(src, "%.%w+$", "")
-  id = string.gsub(id, "images/", "")
+  id = string.gsub(id, "^images/", "")
   return format_inline("icon", id)
 end
 
-function CaptionedImage(s, src, tit)
-  local id = string.gsub(s, "%.%w+$", "")
-  id = string.gsub(id, "images/", "")
-  local buffer = {}
-  if (tit ~= "") then
-    table.insert(buffer, "//image[" .. id .. "][" .. tit .. "]{")
+function CaptionedImage(s, src, tit, attr)
+  local path = "[" .. s:gsub("%.%w+$", ""):gsub("^images/", "") .. "]"
+
+  local comment = src:gsub("^fig:", ""):gsub("(.+)", "\n%1")
+
+  local scale = attr_scale(attr, "scale")
+  if scale == "" then
+    local width = attr_scale(attr, "width")
+    local height = attr_scale(attr, "height")
+    if (width ~= "") then
+      if (height ~= "") and (width ~= height) then
+        log("WARNING: Image width and height must be same. Using width.\n")
+      end
+      scale = width
+    else
+      scale = height
+    end
+  end
+  if scale ~= "" then
+    scale = "[scale=" .. scale .. "]"
+  end
+
+  local command = "//image"
+  local caption = ""
+  if (tit == "") then
+    command = "//indepimage"
   else
-    table.insert(buffer, "//indepimage[" .. id .. "]{")
+    caption = "[" .. tit .. "]"
   end
-  if (src ~= "" and src ~= "fig:") then
-    src = string.gsub(src, "fig:", "")
-    table.insert(buffer, src)
-  end
-  table.insert(buffer, "//}")
-  return table.concat(buffer, "\n")
+
+  return (
+    command .. path .. caption .. scale .. "{" .. comment .. "\n//}"
+  )
 end
 
 function Note(s)
