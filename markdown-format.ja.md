@@ -22,7 +22,15 @@ four
 onetwo
 
 threefour
+
+I
+have
+a pen.
+↓
+Ihavea pen.
 ```
+
+この結果から推察されるとおり、複数行からなる英語文章は、変換時におかしな結果になります。
 
 ## 見出し
 Setext 形式・ATX 形式は問いません。見出しレベル 7 以上は、re ファイルに変換することはできますが、Re:VIEW のコンパイル時にエラーになります。
@@ -185,6 +193,38 @@ qsort []     = []
 ## リンク
 
 ## 画像
+
+画像ファイルは拡張子を除いたものがそのまま Re:VIEW での ID となります。画像ファイルは images フォルダに配置する必要があります。
+
+キャプションがあるときには `//image`、ないときには `//indepimage` に変換されます。ファイル名の後に付けることができる代替テキスト (リンクテキスト) は Re:VIEW では対応しませんが、`//image`、`//indepimage` ブロック内のコメントとなります。
+
+Re:VIEW は空白の混じったファイル名を推奨していません。
+
+```
+![](lalune.jpg)
+↓
+//indepimage[lalune]{
+//}
+
+![La Lune](lalune.jpg)
+↓
+//image[lalune][La Lune]{
+//}
+
+![La Lune](lalune.jpg "Le Voyage dans la Lune")
+↓
+//image[lalune][La Lune]{
+Le Voyage dans la Lune
+//}
+```
+
+前また後に文字があるときには、インライン画像と見なし、`@<icon>` に変換します。キャプションや代替テキストは無視されます。
+
+```
+This is ![](lalune.jpg) image.
+↓
+This is @<icon>{lalune} image.
+```
 
 ## Div と Span
 

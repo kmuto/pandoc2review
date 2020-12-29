@@ -145,6 +145,7 @@ function LineBreak()
 end
 
 function SoftBreak(s)
+  -- FIXME: can I check the character type before/after this break?
   return ""
 end
 
