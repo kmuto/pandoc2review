@@ -7,11 +7,9 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [2.7]
-        # os: [ubuntu-latest macOS-latest]
         os: [ubuntu-latest]
    steps:
    - uses: actions/checkout@v2
-# FIXME: Install pandoc
    - name: Setup Ruby
      uses: ruby/setup-ruby@v1
      with:
