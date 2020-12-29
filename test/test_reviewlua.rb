@@ -604,6 +604,65 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_div
+    src = <<-EOB
+<div class="note">
+**abc**
+
+def
+</div>
+EOB
+
+    expected = <<-EOB
+//note{
+@<b>{abc}
+
+def
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+<div class="unknown">
+abc
+
+def
+</div>
+EOB
+
+    expected = <<-EOB
+//unknown{
+abc
+
+def
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+<div class="note">
+# hello
+abc
+
+def
+</div>
+EOB
+
+    expected = <<-EOB
+//note{
+= hello
+
+abc
+
+def
+//}
+EOB
+    # FIXME: Hmm, "= hello" is invalid. should be "# hello"?
+    assert_equal expected, pandoc(src)
+  end
+
   def test_span_base
     src = '<span>abc</span>'
     assert_equal 'abc', pandoc(src).chomp

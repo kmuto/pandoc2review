@@ -365,11 +365,33 @@ This is @<icon>{lalune} image.
 
 ## Div と Span
 
-★
+HTML の生タグであるブロック `<div>`、インライン `<span>` の属性情報を使って Re:VIEW の命令に変換できます。
 
-//noteなど
+### Div
+`<div>` HTML タグを使い、`class` 属性で Re:VIEW のブロック命令を指定できます。
 
-`span` では、`class` 属性で Re:VIEW のインライン命令を指定できます。以下に対応しています。
+挙動としてはシンプルで、`class` 属性の値をそのままブロック命令にします。(★)
+
+```
+<div class="note">
+**abc**
+
+def
+</div>
+↓
+//note{
+@<b>{abc}
+
+def
+//}
+```
+
+- Markdown のインライン命令・ブロック命令などが変換された状態で入ります。
+- 変換時に Re:VIEW のブロック命令にキャプションやオプションを指定することはできません。(★)
+- //tsize, //bibpaper, //noindent, //blankline などの単一行ブロック命令は指定できません。(★)
+
+### Span
+`<span>` HTML タグを使い、`class` 属性で Re:VIEW のインライン命令を指定できます。以下に対応しています。
 
 bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq hd column uchar icon m w wb idx hidx balloon
 
