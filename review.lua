@@ -409,11 +409,9 @@ function Image(s, src, tit)
 end
 
 function CaptionedImage(s, src, tit, attr)
-  local id = s:gsub("%.%w+$", ""):gsub("images/", "")
+  local path = "[" .. s:gsub("%.%w+$", ""):gsub("images/", "") .. "]"
 
-  if (src ~= "" and src ~= "fig:") then
-    src = src:gsub("fig:", "")
-  end
+  local comment = src:gsub("fig:", ""):gsub("(.+)", "\n%1\n")
 
   local scale = attr_scale(attr, "scale")
   if scale == "" then
@@ -429,15 +427,19 @@ function CaptionedImage(s, src, tit, attr)
     end
   end
   if scale ~= "" then
-    scale = "[" .. scale .. "]"
+    scale = "[scale=" .. scale .. "]"
   end
 
-  if (tit ~= "") or (scale ~= "") then
-    tit = "[" .. tit .. "]"
+  local command = "//image"
+  local caption = ""
+  if (tit == "") then
+    command = "//indepimage"
+  else
+    caption = "[" .. tit .. "]"
   end
 
   return (
-    "//image[" .. id .. "]" .. tit .. scale .. "{\n" .. src .. "\n//}"
+    command .. path .. caption .. scale .. "{" .. comment .. "//}"
   )
 end
 
