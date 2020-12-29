@@ -2,18 +2,15 @@ name: Test
 on: [push]
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        ruby: [2.7]
-        os: [ubuntu-latest]
    steps:
    - uses: actions/checkout@v2
    - name: Setup Ruby
      uses: ruby/setup-ruby@v1
      with:
-       ruby-version: ${{ matrix.ruby }}
+       ruby-version: 2.7
    - name: build and test
      run: |
        gem install bundler --no-document
