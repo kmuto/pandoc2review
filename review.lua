@@ -404,12 +404,12 @@ end
 function Image(s, src, tit)
   -- Re:VIEW @<icon> ignores caption and title
   local id = string.gsub(src, "%.%w+$", "")
-  id = string.gsub(id, "images/", "")
+  id = string.gsub(id, "^images/", "")
   return format_inline("icon", id)
 end
 
 function CaptionedImage(s, src, tit, attr)
-  local path = "[" .. s:gsub("%.%w+$", ""):gsub("images/", "") .. "]"
+  local path = "[" .. s:gsub("%.%w+$", ""):gsub("^images/", "") .. "]"
 
   local comment = src:gsub("fig:", ""):gsub("(.+)", "\n%1")
 
