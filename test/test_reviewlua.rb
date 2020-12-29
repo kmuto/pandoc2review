@@ -604,6 +604,29 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_span_base
+    src = '<span>abc</span>'
+    assert_equal 'abc', pandoc(src).chomp
+    %w(bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq hd column uchar icon m w wb idx hidx balloon).each do |tag|
+      src = %Q(<span class="#{tag}">abc</span>)
+      assert_equal "@<#{tag}>{abc}", pandoc(src).chomp
+    end
+
+    src = '<span class="chap unknown">abc</span>'
+    assert_equal '@<chap>{abc}', pandoc(src).chomp
+    src = '<span class="chap unknown b">abc</span>'
+    assert_equal '@<b>$@<chap>{abc}$', pandoc(src).chomp # illegal for Re:VIEW, but it indicates what you want
+  end
+
+  def test_span_two
+    src = '<span class="kw">abc</span>'
+    assert_equal '@<kw>{abc}', pandoc(src).chomp
+    src = '<span kw="supplement">abc</span>'
+    assert_equal '@<kw>{abc,supplement}', pandoc(src).chomp
+    src = '<span ruby="パン">麺麭</span>'
+    assert_equal '@<ruby>{麺麭,パン}', pandoc(src).chomp
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default

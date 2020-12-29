@@ -369,6 +369,36 @@ This is @<icon>{lalune} image.
 
 //noteなど
 
+`span` では、`class` 属性で Re:VIEW のインライン命令を指定できます。以下に対応しています。
+
+bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq hd column uchar icon m w wb idx hidx balloon
+
+```
+<span class="hidx">index</span>
+↓
+@<hidx>{index}
+```
+
+キーワード (`kw`), ルビ (`ruby`) は Re:VIEW では第二引数があるので、属性で指定します。
+
+```
+<span kw="supplement">abc</span>
+↓
+@<kw>{abc,supplement}
+
+<span ruby="パン">麺麭</span>
+↓
+@<ruby>{麺麭,パン}
+```
+
+未知の class 属性は単に無視されます。
+
+```
+<span class="chap unknown">abc</span>
+↓
+@<chap>{abc}
+```
+
 ## 脚注
 
 ★

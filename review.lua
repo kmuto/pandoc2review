@@ -481,7 +481,7 @@ function Span(s, attr)
   for _, cmd in ipairs({"ruby", "kw"}) do
     a = attr_val(attr, cmd)
     if a ~= "" then
-      s = format_inline(cmd, s .. ", " .. a)
+      s = format_inline(cmd, s .. "," .. a)
     end
   end
 
