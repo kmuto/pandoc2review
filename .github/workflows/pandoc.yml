@@ -13,4 +13,6 @@ jobs:
       with:
         pandoc-version: '2.11.3'
     - run: |
-        pandoc -v
+        gem install bundler --no-document
+        bundle install --retry 3
+        bundle exec ruby test/run_test.rb
