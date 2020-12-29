@@ -257,21 +257,26 @@ end
 
 function CodeBlock(s, attr)
   local classes = attr_classes(attr)
-  local lang = ""
-  local not_lang = {numberLines = true, num = true, em = true}
-  not_lang["number-lines"] = true
-  for key,_ in pairs(classes) do
-    if not_lang[key] ~= true then
-      lang = "[" .. key .. "]"
+
+  local command = nil
+  for k,v in pairs({cmd = "cmd", source = "source", quote = "source"}) do
+    if classes[k] then
+      command = v
       break
     end
   end
+  command = command or "list"
 
-  local num = (classes["numberLines"] or classes["number-lines"] or classes["num"]
-    ) and "num" or ""
+  is_list = command == "list"
+
+
+  local num = (is_list == false) and "" or (
+      (classes["numberLines"] or classes["number-lines"] or classes["num"]) and
+        "num" or ""
+    )
 
   local firstlinenum = ""
-  if num == "num" then
+  if is_list and (num == "num") then
     for _, key in ipairs({"startFrom", "start-from", "firstlinenum"}) do
       firstlinenum = attr_val(attr, key)
       if firstlinenum ~= "" then
@@ -281,15 +286,31 @@ function CodeBlock(s, attr)
     end
   end
 
-  local caption = attr_val(attr, "caption") -- ```{caption=CAPTION}
+  local lang = ""
+  local not_lang = {numberLines = true, num = true, em = true, source = true}
+  not_lang["number-lines"] = true
+  if is_list or (command == "source") then
+    for key,_ in pairs(classes) do
+      if not_lang[key] ~= true then
+        lang = "[" .. key .. "]"
+        break
+      end
+    end
+  end
+
+  local caption = (command == "cmd") and "" or attr_val(attr, "caption")
   local identifier = ""
-  local em = classes["em"] and "em" or ""
+  local em = is_list and classes["em"] and "em" or ""
   if (caption ~= "") then
-    list_num = list_num + 1
-    identifier = "[list" .. list_num .. "]"
+    if is_list and (em == "") then
+      list_num = list_num + 1
+      identifier = "[list" .. list_num .. "]"
+    end
     caption = "[" .. caption .. "]"
   else
-    em = "em"
+    if is_list then
+      em = "em"
+    end
     if lang ~= "" then
       caption = "[" .. caption .. "]"
     end
@@ -297,7 +318,7 @@ function CodeBlock(s, attr)
 
   return (
       firstlinenum ..
-      "//" .. em .. "list" .. num .. identifier .. caption .. lang ..
+      "//" .. em .. command .. num .. identifier .. caption .. lang ..
       "{\n" .. s .. "\n//}"
     )
 end
