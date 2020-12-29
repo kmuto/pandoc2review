@@ -303,8 +303,12 @@ function CodeBlock(s, attr)
   local em = is_list and classes["em"] and "em" or ""
   if (caption ~= "") then
     if is_list and (em == "") then
-      list_num = list_num + 1
-      identifier = "[list" .. list_num .. "]"
+      if (attr.id ~= "") then
+        identifier = "[" .. attr.id .. "]"
+      else
+        list_num = list_num + 1
+        identifier = "[list" .. list_num .. "]"
+      end
     end
     caption = "[" .. caption .. "]"
   else

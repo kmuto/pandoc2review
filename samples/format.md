@@ -127,6 +127,11 @@ class Hoge
 end
 ```
 
+```{#myhoge .foo caption="ほげほげ"}
+class Hoge
+end
+```
+
 ```{.foo caption="ほげほげ"}
 class Hoge
 end
