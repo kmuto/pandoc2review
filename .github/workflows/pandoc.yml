@@ -8,5 +8,5 @@ jobs:
     - uses: actions/checkout@master
     - uses: r-lib/actions/setup-pandoc@v1
       with:
-        pandoc-version: '2.7.3'
+        pandoc-version: '2.11.3'
     - run: pandoc -v
