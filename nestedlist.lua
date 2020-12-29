@@ -1,5 +1,5 @@
 beginchild = pandoc.Plain({pandoc.Str('//beginchild')})
-endchild = pandoc.Plain({pandoc.Str('//endchild'), pandoc.LineBreak()})
+endchild = pandoc.Plain({pandoc.Str('//endchild')})
 tags_list = {
   BulletList = true,
   OrderedList = true,

@@ -236,7 +236,7 @@ function BulletList(items)
       table.insert(buffer, " * " .. item)
     end
   end
-  return table.concat(buffer, "\n")
+  return table.concat(buffer, "\n\n")
 end
 
 function OrderedList(items, start)
