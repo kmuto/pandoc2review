@@ -2,13 +2,18 @@
 require 'test_helper'
 
 class ReviewLuaTest < Test::Unit::TestCase
-  def pandoc(src, opts=nil)
+  def pandoc(src, opts: nil, err: nil)
     args = 'pandoc -t review.lua --lua-filter=nestedlist.lua --lua-filter=strong.lua -f markdown-auto_identifiers-smart'
     if opts
       args += ' ' + opts
     end
-    stdout, status = Open3.capture2(args, stdin_data: src)
-    stdout
+    if err
+      stdout, stderr, status = Open3.capture3(args, stdin_data: src)
+      return stdout, stderr
+    else
+      stdout, status = Open3.capture2(args, stdin_data: src)
+      stdout
+    end
   end
 
   def test_para
@@ -839,16 +844,38 @@ EOB
     assert_equal "//image[lalune][La Lune]{\n//}", pandoc(src).chomp
     src = '![La Lune](lalune.jpg "Le Voyage dans la Lune")'
     assert_equal "//image[lalune][La Lune]{\nLe Voyage dans la Lune\n//}", pandoc(src).chomp
+
+    src = '![](images/lalune.jpg)'
+    assert_equal "//indepimage[lalune]{\n//}", pandoc(src).chomp
+    src = '![](images/lalune.jpg){scale=0.5}'
+    assert_equal "//indepimage[lalune][scale=0.5]{\n//}", pandoc(src).chomp
+    src = '![La Lune](lalune.jpg){scale=0.5}'
+    assert_equal "//image[lalune][La Lune][scale=0.5]{\n//}", pandoc(src).chomp
+    src = '![La Lune](lalune.jpg){width=50%}'
+    assert_equal "//image[lalune][La Lune][scale=0.5]{\n//}", pandoc(src).chomp
+    src = '![La Lune](lalune.jpg "Le Voyage dans la Lune"){height=50%}'
+    assert_equal "//image[lalune][La Lune][scale=0.5]{\nLe Voyage dans la Lune\n//}", pandoc(src).chomp
+
+    src = '![title](path.png){width=30}'
+    stdout, stderr = pandoc(src, err: true)
+    assert_match /WARNING: Units must be % for/, stderr
+    assert_equal "//image[path][title]{\n//}", stdout.chomp
+
+    src = '![title](path.png){width=30% height=50%}'
+    stdout, stderr = pandoc(src, err: true)
+    assert_match /WARNING: Image width and height/, stderr
+    assert_equal "//image[path][title][scale=0.3]{\n//}", stdout.chomp
+
     src = 'This is ![](lalune.jpg) image.'
     assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp
     src = 'This is ![La Lune](lalune.jpg) image.'
     assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
     src = 'This is ![La Lune](lalune.jpg "Le Voyage dans la Lune") image.'
     assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
+
     src = '![](images/baz/foo.bar.lalune.jpg)'
     assert_equal "//indepimage[baz/foo.bar.lalune]{\n//}", pandoc(src).chomp
     src = '![](a b.jpg)'
     assert_equal "//indepimage[a%20b]{\n//}", pandoc(src).chomp # XXX: This result seems not our expectations... However, Re:VIEW eventually rejects filenames with spaces. So? Don't care about this :)
-    # FIXME: more (scale)
   end
 end

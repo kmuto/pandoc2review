@@ -327,7 +327,7 @@ see @<href>{https://fsf.org,my label}.
 
 ## 画像
 
-画像ファイルは拡張子を除いたものがそのまま Re:VIEW での ID となります。画像ファイルは images フォルダに配置する必要があります。
+画像ファイルは拡張子を除いたものがそのまま Re:VIEW での ID となります。画像ファイルは images フォルダに配置する必要があります。たとえば Markdown ファイル内で `![](images/laune.jpg)` としていたときには、`laune` が ID になります。
 
 キャプションがあるときには `//image`、ないときには `//indepimage` に変換されます。ファイル名の後に付けることができる代替テキスト (リンクテキスト) は Re:VIEW では対応しませんが、`//image`、`//indepimage` ブロック内のコメントとなります。
 
@@ -347,6 +347,26 @@ see @<href>{https://fsf.org,my label}.
 ![La Lune](lalune.jpg "Le Voyage dans la Lune")
 ↓
 //image[lalune][La Lune]{
+Le Voyage dans la Lune
+//}
+```
+
+`width`、`height`、`scale` の属性が付けられているときには、`scale` パラメータに変換されます。
+
+```
+![](images/lalune.jpg){scale=0.5}
+↓
+//indepimage[lalune][scale=0.5]{
+//}
+
+![La Lune](lalune.jpg){width=50%}
+↓
+//image[lalune][La Lune][scale=0.5]{
+//}
+
+![La Lune](lalune.jpg "Le Voyage dans la Lune"){height=50%}
+↓
+//image[lalune][La Lune][scale=0.5]{
 Le Voyage dans la Lune
 //}
 ```
