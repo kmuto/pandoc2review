@@ -145,7 +145,15 @@ function LineBreak()
 end
 
 function SoftBreak(s)
-  return "◆→__P2RBR__←◆"
+  if (metadata.softbreak) then
+    if (metadata.softbreak == 'INTERNAL') then
+      return "◆→__P2RBR__←◆"
+    else
+      return metadata.softbreak
+    end
+  else
+    return " "
+  end
 end
 
 function Plain(s)
@@ -546,46 +554,46 @@ try_catch {
 
 if (metadata) then
   -- Load config from YAML
-  if (metadata.pandoc2review and metadata.pandoc2review.use_header_id) then
-    if (stringify(metadata.pandoc2review.use_header_id) == "false") then
+  if (use_header_id) then
+    if (stringify(metadata.use_header_id) == "false") then
       config.use_header_id = nil
     end
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.use_hr) then
-    if (stringify(metadata.pandoc2review.use_hr) == "false") then
+  if (metadata.use_hr) then
+    if (stringify(metadata.use_hr) == "false") then
       config.use_hr = nil
     end
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.use_table_align) then
-    if (stringify(metadata.pandoc2review.use_table_align) == "false") then
+  if (metadata.use_table_align) then
+    if (stringify(metadata.use_table_align) == "false") then
       config.use_table_align = nil
     end
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.bold) then
-    config.bold = stringify(metadata.pandoc2review.bold)
+  if (metadata.bold) then
+    config.bold = stringify(metadata.bold)
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.italic) then
-    config.italic = stringify(metadata.pandoc2review.italic)
+  if (metadata.italic) then
+    config.italic = stringify(metadata.italic)
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.code) then
-    config.code = stringify(metadata.pandoc2review.code)
+  if (metadata.code) then
+    config.code = stringify(metadata.code)
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.strike) then
-    config.strike = stringify(metadata.pandoc2review.strike)
+  if (metadata.strike) then
+    config.strike = stringify(metadata.strike)
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.underline) then
-    config.underline = stringify(metadata.pandoc2review.underline)
+  if (metadata.underline) then
+    config.underline = stringify(metadata.underline)
   end
 
-  if (metadata.pandoc2review and metadata.pandoc2review.lineblock) then
-    config.lineblock = stringify(metadata.pandoc2review.lineblock)
+  if (metadata.lineblock) then
+    config.lineblock = stringify(metadata.lineblock)
   end
 end
 
