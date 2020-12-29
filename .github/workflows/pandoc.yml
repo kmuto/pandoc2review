@@ -1,0 +1,18 @@
+name: Pandoc
+on: push
+
+jobs:
+  Pandoc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+    - uses: r-lib/actions/setup-pandoc@v1
+      with:
+        pandoc-version: '2.11.3'
+    - run: |
+        gem install bundler --no-document
+        bundle install --retry 3
+        bundle exec ruby test/run_test.rb
