@@ -643,7 +643,7 @@ EOB
 
     src = <<-EOB
 <div class="note">
-# hello
+## hello
 abc
 
 def
@@ -652,14 +652,13 @@ EOB
 
     expected = <<-EOB
 //note{
-= hello
+== hello
 
 abc
 
 def
 //}
 EOB
-    # FIXME: Hmm, "= hello" is invalid. should be "# hello"?
     assert_equal expected, pandoc(src)
   end
 
