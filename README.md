@@ -27,6 +27,7 @@ pandoc2review file > file.re
 
 ## Options
 - `--shiftheading <num>`: Add <num> to heading level. (pandoc >= 2.8)
+- `--disable-eaw`: Disable compositing a paragraph with Ruby's EAW library.
 
 ## Specification
 - [pandoc2review における Markdown 形式処理の注意事項](markdown-format.ja.md)
