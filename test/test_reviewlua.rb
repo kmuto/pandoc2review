@@ -520,11 +520,15 @@ EOB
  : Term 2 with @<i>{inline markup}
 	Definition 2
 
+//beginchild
+
 //emlist{
 { some code, part of Definition 2 }
 //}
 
 Third paragraph of definition 2.
+
+//endchild
 EOB
     # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
