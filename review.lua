@@ -141,18 +141,15 @@ function Space()
 end
 
 function LineBreak()
+  -- @<br>{} ?
   return "\n"
 end
 
 function SoftBreak(s)
   if (metadata.softbreak) then
-    if (metadata.softbreak == 'INTERNAL') then
-      return "◆→__P2RBR__←◆"
-    else
-      return metadata.softbreak
-    end
-  else
     return " "
+  else
+    return "<P2RBR/>"
   end
 end
 

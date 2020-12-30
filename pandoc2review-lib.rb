@@ -20,8 +20,8 @@ def main
     if file =~ /\.md$/i
       args += ['-f', 'markdown-auto_identifiers-smart+east_asian_line_breaks']
 
-      if @softbreak
-        args += ['-M', "softbreak:#{@softbreak}"]
+      if @disableeaw
+        args += ['-M', "softbreak:true"]
       end
     end
 
@@ -42,7 +42,7 @@ end
 
 def parse_args
   @heading = nil
-  @softbreak = 'INTERNAL'
+  @disableeaw = nil
   opts = OptionParser.new
   opts.banner = 'Usage: pandoc2review [option] file [file ...]'
   opts.version = '1.0'
@@ -54,8 +54,8 @@ def parse_args
   opts.on('--shiftheading num', 'Add <num> to heading level.') do |v|
     @heading = v
   end
-  opts.on('--softbreak string', 'Use <string> for soft line break instead of internal east asian handling.') do |v|
-    @softbreak = v
+  opts.on('--disable-eaw', "Disable compositing a paragraph with Ruby's EAW library.") do
+    @disableeaw = true
   end
 
   opts.parse!(ARGV)
@@ -66,7 +66,7 @@ def parse_args
 end
 
 def softbreak(s)
-  s.gsub(/◆→__P2RBR__←◆/) do
+  s.gsub('<P2RBR/>') do
     tail = $`[-1]
     head = $'[0]
     return '' if tail.nil? || head.nil?

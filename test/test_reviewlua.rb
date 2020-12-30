@@ -4,10 +4,6 @@ require 'test_helper'
 class ReviewLuaTest < Test::Unit::TestCase
   def pandoc(src, opts: nil, err: nil)
     args = 'pandoc -t review.lua --lua-filter=nestedlist.lua --lua-filter=strong.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
-    if !opts || opts !~ /-M softbreak/
-      args += ' -M softbreak:INTERNAL'
-    end
-
     if opts
       args += ' ' + opts
     end
@@ -43,7 +39,9 @@ one two
 threefour
 EOB
     assert_equal expected, pandoc(src)
+  end
 
+  def test_eaw
     src = <<-EOB
 Is This
  a pen?
@@ -59,12 +57,12 @@ EOB
     expected = <<-EOB
 Is This a pen? Yes, This is a pen.日本語文字12漢字ABC?あ
 EOB
-    assert_equal expected, pandoc(src)
+    assert_equal expected, pandoc(src) # Ruby EAW
 
     expected = <<-EOB
 Is This a pen? Yes, This is a pen. 日本語文字 12 漢字 ABC? あ
 EOB
-    assert_equal expected, pandoc(src, opts: '-M softbreak:" "')
+    assert_equal expected, pandoc(src, opts: '-M softbreak:true')
   end
 
   def test_surround_inline
