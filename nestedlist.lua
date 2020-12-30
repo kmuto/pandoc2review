@@ -32,6 +32,5 @@ end
 return {
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
-  {DefinitionList = DefinitionList},
   {DefinitionList = nestablelist}
 }
