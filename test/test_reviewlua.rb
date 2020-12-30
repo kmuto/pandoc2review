@@ -350,12 +350,21 @@ EOB
     src = <<-EOB
 * First paragraph.
 
+//beginchild
+
   Continued.
+
+//endchild
 
 * Second paragraph. With a code block, which must be indented
   eight spaces:
 
+//beginchild
+
       { code }
+
+//endchild
+
 EOB
 
     expected = <<-EOB
