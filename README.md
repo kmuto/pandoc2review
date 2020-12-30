@@ -2,6 +2,8 @@
 
 [![Build Status](https://github.com/kmuto/pandoc2review/workflows/Pandoc/badge.svg)](https://github.com/kmuto/pandoc2review/actions)
 
+- [日本語での説明](#日本語での説明)
+
 **pandoc2review** is Re:VIEW Filter/Writer for Pandoc. You can convert any documents to [Re:VIEW](https://reviewml.org/) format.
 
 ## Installation
@@ -44,3 +46,36 @@ GNU General Public License Version 2
 
 ## Changelog
 TBD.
+
+---
+## 日本語での説明
+
+**pandoc2review** は、Pandoc の Re:VIEW Filter/Writer です。各種のドキュメントから [Re:VIEW](https://reviewml.org/) 形式に変換できます。
+
+## インストール
+
+1. [Ruby](https://www.ruby-lang.org/) (バージョンは問いません) および [Pandoc](https://pandoc.org/) (新しいものほどよいです) をセットアップします。
+2. このリポジトリをクローンするか、リリースファイルをダウンロードして適当な場所に展開します。
+3. 展開した `pandoc2review` フォルダ内で、`bundle install` を実行します。
+4. (必要であれば) `pandoc2review` コマンドを絶対パス指定なしで呼び出せるよう、PATH 環境変数に展開した `pandoc2review` フォルダのパスを追加します。
+
+## 使い方
+
+Markdown の場合:
+
+```
+pandoc2review ファイル.md > ファイル.re
+```
+
+その他のファイル (Microsoft docx, LaTeX, など) の場合:
+
+```
+pandoc2review ファイル名 > ファイル名.re
+```
+
+## オプション
+- `--shiftheading <数>`: 見出しレベルに <数> だけ加えます (pandoc >= 2.8)
+- `--disable-eaw`: Ruby の EAW ライブラリを使った段落構築を使いません
+
+## 仕様
+- [pandoc2review における Markdown 形式処理の注意事項](markdown-format.ja.md)
