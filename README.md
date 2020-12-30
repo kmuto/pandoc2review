@@ -8,7 +8,8 @@
 
 1. Setup [Ruby](https://www.ruby-lang.org/) (any versions) and [Pandoc](https://pandoc.org/) (newer is better).
 2. Clone this repository, or download release file and extract somewhere.
-3. (Optional) Modify PATH environment variable to point the extracted `pandoc2review` folder, to ease to call `pandoc2review` command without its absolute path.
+3. Do `bundle install` in extracted `pandoc2review` folder.
+4. (Optional) Modify PATH environment variable to point the extracted `pandoc2review` folder, to ease to call `pandoc2review` command without its absolute path.
 
 ## Usage
 
