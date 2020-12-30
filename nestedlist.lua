@@ -23,8 +23,6 @@ local function nestablelist(elem)
         table.insert(last.content, endchild)
       elseif last.tag then
         table.insert(block, pandoc.BulletList(endchild))
-      elseif second[2] then
-        --table.insert(last[#last], pandoc.BulletList(endchild))
       end
     end
   end
