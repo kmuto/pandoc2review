@@ -396,10 +396,12 @@ EOB
  * red delicious
 
 //endchild
+
  * pears
  * peaches
 
 //endchild
+
  * vegetables
 
 //beginchild
@@ -408,6 +410,7 @@ EOB
  * chard
 
 //endchild
+
 EOB
 
     assert_equal expected, pandoc(src)
@@ -464,6 +467,7 @@ EOB
  2. one-two
 
 //endchild
+
  2. two
 EOB
 
