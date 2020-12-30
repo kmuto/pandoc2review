@@ -532,11 +532,39 @@ function Span(s, attr)
 end
 
 function RawInline(format, text)
-  return text
+  if (format == "review") then
+    return text
+  end
+
+  if (metadata.hideraw) then
+    return ""
+  end
+
+  if (format == "tex") then
+    return format_inline("embed", "|latex|" .. text)
+  elseif (format == "html") then
+    return format_inline("embed", "|html|" .. text)
+  else
+    return format_inline("embed", text)
+  end
 end
 
 function RawBlock(format, text)
-  return text
+  if (format == "review") then
+    return text
+  end
+
+  if (metadata.hideraw) then
+    return ""
+  end
+
+  if (format == "tex") then
+    return "//embed[latex]{\n" .. text .. "\n//}"
+  elseif (format == "html") then
+    return "//embed[html]{\n" .. text .. "\n//}"
+  else
+    return "//embed{\n" .. text .. "\n//}"
+  end
 end
 
 try_catch {
