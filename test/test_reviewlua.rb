@@ -350,32 +350,32 @@ EOB
     src = <<-EOB
 * First paragraph.
 
-//beginchild
-
   Continued.
-
-//endchild
 
 * Second paragraph. With a code block, which must be indented
   eight spaces:
 
-//beginchild
-
       { code }
-
-//endchild
-
 EOB
 
     expected = <<-EOB
  * First paragraph.
 
+//beginchild
+
 Continued.
+
+//endchild
+
  * Second paragraph. With a code block, which must be indentedeight spaces:
+
+//beginchild
 
 //emlist{
 { code }
 //}
+
+//endchild
 EOB
     # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
