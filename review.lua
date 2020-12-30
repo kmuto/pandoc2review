@@ -141,8 +141,7 @@ function Space()
 end
 
 function LineBreak()
-  -- @<br>{} ?
-  return "\n"
+  return "@<br>{}"
 end
 
 function SoftBreak(s)
