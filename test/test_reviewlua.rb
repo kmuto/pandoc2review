@@ -367,7 +367,7 @@ Continued.
 
 //endchild
 
- * Second paragraph. With a code block, which must be indentedeight spaces:
+ * Second paragraph. With a code block, which must be indented eight spaces:
 
 //beginchild
 
