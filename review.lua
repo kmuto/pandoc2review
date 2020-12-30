@@ -266,7 +266,7 @@ function DefinitionList(items)
       table.insert(buffer, " : " .. k .. "\n\t" .. table.concat(v, "\n"))
     end
   end
-  return table.concat(buffer, "\n") .. "\n"
+  return lint_list(table.concat(buffer, "\n") .. "\n")
 end
 
 function BlockQuote(s)

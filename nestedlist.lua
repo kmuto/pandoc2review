@@ -3,17 +3,28 @@ local endchild = {pandoc.Plain(pandoc.Str('//endchild'))}
 
 local function nestablelist(elem)
   for _, block in ipairs(elem.content) do
-    if block[2] then
-      if block[2].tag == "BulletList" then
-        table.insert(block[2].content, 1, beginchild)
-      else
+    local second = block[2]
+    if second then
+      if second.tag == "BulletList" then
+        table.insert(second.content, 1, beginchild)
+      elseif second.tag then
         table.insert(block, 2, pandoc.BulletList(beginchild))
+      else
+        for _,definition in ipairs(second) do
+          if definition[2] then
+            table.insert(definition, 2, pandoc.BulletList(beginchild))
+            table.insert(definition, pandoc.BulletList(endchild))
+          end
+        end
       end
 
-      if block[#block].tag == "BulletList" then
-        table.insert(block[#block].content, endchild)
-      else
+      local last = block[#block]
+      if last.tag == "BulletList" then
+        table.insert(last.content, endchild)
+      elseif last.tag then
         table.insert(block, pandoc.BulletList(endchild))
+      elseif second[2] then
+        --table.insert(last[#last], pandoc.BulletList(endchild))
       end
     end
   end
@@ -23,5 +34,6 @@ end
 return {
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
-  {DefinitionList = nestablelist},
+  {DefinitionList = DefinitionList},
+  {DefinitionList = nestablelist}
 }
