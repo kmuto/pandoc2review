@@ -230,7 +230,7 @@ end
 local function lint_list(s)
   return s:gsub("\n+(//beginchild)\n+", '\n\n%1\n\n'
          ):gsub("\n+(//endchild)\n+", '\n\n%1\n\n'
-         ):gsub("\n+(//endchild)$", "\n\n%1")
+         ):gsub("\n+(//endchild)\n*$", "\n\n%1")
 end
 
 function BulletList(items)
