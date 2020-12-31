@@ -558,10 +558,8 @@ function RawBlock(format, text)
 
   if (format == "tex") then
     return "//embed[latex]{\n" .. text .. "\n//}"
-  elseif (format == "html") then
-    return "//embed[html]{\n" .. text .. "\n//}"
   else
-    return "//embed{\n" .. text .. "\n//}"
+    return "//embed[" .. format .. "]{\n" .. text .. "\n//}"
   end
 end
 
