@@ -755,6 +755,140 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_raw
+    src = <<-EOB
+<table>
+<thead><tr><th colspan="2">TABLEHEAD</th></tr></thead>
+<tbody><tr><td>Cell1</td><td>Cell2</td></tbody>
+</table>
+EOB
+
+    expected = <<-EOB
+//embed[html]{
+<table>
+//}
+
+//embed[html]{
+<thead>
+//}
+
+//embed[html]{
+<tr>
+//}
+
+//embed[html]{
+<th colspan="2">
+//}
+
+TABLEHEAD
+
+//embed[html]{
+</th>
+//}
+
+//embed[html]{
+</tr>
+//}
+
+//embed[html]{
+</thead>
+//}
+
+//embed[html]{
+<tbody>
+//}
+
+//embed[html]{
+<tr>
+//}
+
+//embed[html]{
+<td>
+//}
+
+Cell1
+
+//embed[html]{
+</td>
+//}
+
+//embed[html]{
+<td>
+//}
+
+Cell2
+
+//embed[html]{
+</td>
+//}
+
+//embed[html]{
+</tbody>
+//}
+
+//embed[html]{
+</table>
+//}
+EOB
+    # Bit ugly...
+    assert_equal expected, pandoc(src)
+
+    expected = <<-EOB
+
+
+
+
+
+
+
+
+TABLEHEAD
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cell1
+
+
+
+
+
+Cell2
+
+
+
+
+
+EOB
+    # bit ugly...
+    assert_equal expected, pandoc(src, opts: '-M hideraw')
+
+    src = <<-EOB
+$$ \\alpha = \\beta\\label{eqone}$$
+Refer equation (\\ref{eqone}).
+EOB
+
+    expected = <<-EOB
+@<m>$\\displaystyle{} \\alpha = \\beta\\label{eqone}$ Refer equation (@<embed>$|latex|\\ref{eqone}$).
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    expected = <<-EOB
+@<m>$\\displaystyle{} \\alpha = \\beta\\label{eqone}$ Refer equation ().
+EOB
+    assert_equal expected, pandoc(src, opts: '-M hideraw')
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default

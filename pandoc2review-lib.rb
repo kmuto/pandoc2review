@@ -23,6 +23,10 @@ def main
       if @disableeaw
         args += ['-M', "softbreak:true"]
       end
+
+      if @hideraw
+        args += ['-M', "hideraw:true"]
+      end
     end
 
     if @heading
@@ -43,6 +47,7 @@ end
 def parse_args
   @heading = nil
   @disableeaw = nil
+  @hideraw = nil
   opts = OptionParser.new
   opts.banner = 'Usage: pandoc2review [option] file [file ...]'
   opts.version = '1.0'
@@ -56,6 +61,9 @@ def parse_args
   end
   opts.on('--disable-eaw', "Disable compositing a paragraph with Ruby's EAW library.") do
     @disableeaw = true
+  end
+  opts.on('--hideraw', "Hide raw inline/block with no review format specified.") do
+    @hideraw = true
   end
 
   opts.parse!(ARGV)
