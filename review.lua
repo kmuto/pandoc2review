@@ -510,6 +510,15 @@ function SmallCaps(s)
 end
 
 function Div(s, attr)
+  local blankline = attr_val(attr, "blankline")
+  if blankline ~= "" then
+    local buffer = {}
+    for i = 1, tonumber(blankline) do
+      table.insert(buffer, "//blankline")
+    end
+    return table.concat(buffer, "\n")
+  end
+
   return "//" .. attr_val(attr, "class") .. "{\n" .. s .. "\n//}"
 end
 
