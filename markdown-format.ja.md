@@ -96,7 +96,7 @@ Setext 形式・ATX 形式は問いません。見出しレベル 7 以上は、
 
 '>' による引用は Re:VIEW の `//quote` になります。Re:VIEW の `//quote` は段落のみをサポートしているため、段落以外の要素 (箇条書きなど) は期待の出力になりません。
 
-また、Markdown では `> ` を連ねることで引用を入れ子にすることができますが、Re:VIEW ではこの文法をサポートしていないため、Re:VIEW のコンパイル時にエラーになります。(★)
+また、Markdown では `> ` を連ねることで引用を入れ子にすることができますが、Re:VIEW ではこの文法をサポートしていないため、Re:VIEW のコンパイル時にエラーになります。
 
 ```
 > This is a block quote. This
@@ -208,8 +208,7 @@ Berkeley, CA 94718
 
 - Markdown での空行を項目の間に挟む「ゆるいリスト」は無視され、継続した箇条書きになります。
 - 改行でテキストを継続することは、「怠惰な記法」を含めて可能ですが、段落と同様、自然言語上の意味を見ずに前後のスペースは削除されます。
-- 「箇条書きの箇条書き」は `//beginchild`・`//endchild` で囲まれて表現されます。
-- 箇条書きの子として置いた箇条書き以外の要素、つまり段落やコードブロックなどは、箇条書きの子として扱われずに普通の段落・コードブロックとなります。これらを戻すには、手作業で `//beginchild`・`//endchild` で囲む必要があります。(★)
+- 「箇条書きの子要素」は `//beginchild`・`//endchild` で囲まれて表現されます。
 
 ### ビュレット (ナカグロ) 箇条書き
 
@@ -257,7 +256,38 @@ Markdown では指定の順序数値を無視しますが、pandoc2review では
 
 ### 定義リスト
 
-定義リストは単純なものであれば正しく変換できますが、複数の段落があったり、子要素があったりすると、子の要素にならない、改行されない、といった期待とは異なる結果になるでしょう。(★)
+定義リストも、子要素を含めて表現できます。
+
+```
+Term 1
+
+:   Definition 1
+
+Term 2 with *inline markup*
+
+:   Definition 2
+
+        { some code, part of Definition 2 }
+
+    Third paragraph of definition 2.
+
+↓
+
+ : Term 1
+	Definition 1
+ : Term 2 with @<i>{inline markup}
+	Definition 2
+
+//beginchild
+
+//emlist{
+{ some code, part of Definition 2 }
+//}
+
+Third paragraph of definition 2.
+
+//endchild
+```
 
 ## 水平線
 
@@ -499,6 +529,95 @@ The whole paragraph can be indented, or just the firstline. In this way, multi-p
 
 `@` は Twitter ID などの地の文で使うことのほうが一般的であると思われるため、pandoc2review では Citation (引用文献) 機能を使いません。リテラルに `@` を出力します。(★)
 
-## 生のHTML
+## 生の HTML/LaTeX
 
-★
+Markdown において Div, Span 以外の HTML タグは生のデータとして扱われます。HTML タグは変換時に `//embed[html]{ 〜 //}` で囲まれます。
+
+```
+<table>
+<thead><tr><th colspan="2">TABLEHEAD</th></tr></thead>
+<tbody><tr><td>Cell1</td><td>Cell2</td></tbody>
+</table>
+
+↓
+
+//embed[html]{
+<table>
+//}
+
+//embed[html]{
+<thead>
+//}
+
+//embed[html]{
+<tr>
+//}
+
+//embed[html]{
+<th colspan="2">
+//}
+
+TABLEHEAD
+
+//embed[html]{
+</th>
+//}
+
+//embed[html]{
+</tr>
+//}
+
+//embed[html]{
+</thead>
+//}
+
+//embed[html]{
+<tbody>
+//}
+
+//embed[html]{
+<tr>
+//}
+
+//embed[html]{
+<td>
+//}
+
+Cell1
+
+//embed[html]{
+</td>
+//}
+
+//embed[html]{
+<td>
+//}
+
+Cell2
+
+//embed[html]{
+</td>
+//}
+
+//embed[html]{
+</tbody>
+//}
+
+//embed[html]{
+</table>
+```
+
+行ではなくタグ単位で囲まれ、普通の文字列はそのまま表現されることに注意してください。
+
+`--hideraw` オプションを付けると、`//embed` を使わず空行になります。
+
+LaTeX コードと解釈されるところは `@<embed>$|latex|〜$` のインライン命令になります。
+
+```
+$$ \\alpha = \\beta\\label{eqone}$$
+Refer equation (\\ref{eqone}).
+
+↓
+
+@<m>$\\displaystyle{} \\alpha = \\beta\\label{eqone}$ Refer equation (@<embed>$|latex|\\ref{eqone}$).
+```

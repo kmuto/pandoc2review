@@ -385,7 +385,6 @@ Continued.
 
 //endchild
 EOB
-    # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
 
     src = <<-EOB
@@ -502,7 +501,7 @@ EOB
 
  2. subtwo
 EOB
-    # XXX: pandoc2review can't handle nested elements except list. Re:VIEW doesn't care paren number and roman number enumerate by default also.
+    # XXX: Re:VIEW doesn't care paren number and roman number enumerate by default also.
     assert_equal expected, pandoc(src)
   end
 
@@ -537,7 +536,6 @@ Third paragraph of definition 2.
 
 //endchild
 EOB
-    # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
 
     src = <<-EOB
