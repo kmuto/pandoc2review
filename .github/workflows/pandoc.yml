@@ -1,5 +1,5 @@
 name: Pandoc
-on: push
+on: [push, pull_request]
 
 jobs:
   Pandoc:

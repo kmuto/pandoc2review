@@ -1,25 +1,29 @@
-beginchild = pandoc.Plain({pandoc.Str('//beginchild')})
-endchild = pandoc.Plain({pandoc.Str('//endchild'), pandoc.LineBreak()})
-tags_list = {
-  BulletList = true,
-  OrderedList = true,
-  DefinitionList = true
-}
+local beginchild = {pandoc.Plain(pandoc.Str('//beginchild'))}
+local endchild = {pandoc.Plain(pandoc.Str('//endchild'))}
 
-function nestablelist(elem, tag)
-  for _, blocks in ipairs(elem.content) do
-    local i_child = {}
-    for i,v in ipairs(blocks) do
-      if tags_list[v.tag] then
-        table.insert(i_child, i)
+local function nestablelist(elem)
+  for _, block in ipairs(elem.content) do
+    local second = block[2]
+    if second then
+      if second.tag == "BulletList" then
+        table.insert(second.content, 1, beginchild)
+      elseif second.tag then
+        table.insert(block, 2, pandoc.BulletList(beginchild))
+      else
+        for _,definition in ipairs(second) do
+          if definition[2] then
+            table.insert(definition, 2, pandoc.BulletList(beginchild))
+            table.insert(definition, pandoc.BulletList(endchild))
+          end
+        end
       end
-    end
 
-    local i_add = 0
-    for _, i in ipairs(i_child) do
-      table.insert(blocks, i + i_add, beginchild)
-      table.insert(blocks, i + i_add + 2, endchild)
-      i_add = i_add + 2
+      local last = block[#block]
+      if last.tag == "BulletList" then
+        table.insert(last.content, endchild)
+      elseif last.tag then
+        table.insert(block, pandoc.BulletList(endchild))
+      end
     end
   end
   return elem

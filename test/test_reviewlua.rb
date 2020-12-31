@@ -369,12 +369,21 @@ EOB
     expected = <<-EOB
  * First paragraph.
 
+//beginchild
+
 Continued.
+
+//endchild
+
  * Second paragraph. With a code block, which must be indented eight spaces:
+
+//beginchild
 
 //emlist{
 { code }
 //}
+
+//endchild
 EOB
     # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
@@ -404,10 +413,12 @@ EOB
  * red delicious
 
 //endchild
+
  * pears
  * peaches
 
 //endchild
+
  * vegetables
 
 //beginchild
@@ -416,6 +427,7 @@ EOB
  * chard
 
 //endchild
+
 EOB
 
     STDERR.puts "Temporary suspended: #{__LINE__}"
@@ -473,6 +485,7 @@ EOB
  2. one-two
 
 //endchild
+
  2. two
 EOB
 
@@ -518,11 +531,15 @@ EOB
  : Term 2 with @<i>{inline markup}
 	Definition 2
 
+//beginchild
+
 //emlist{
 { some code, part of Definition 2 }
 //}
 
 Third paragraph of definition 2.
+
+//endchild
 EOB
     # XXX: pandoc2review can't handle nested elements except list.
     assert_equal expected, pandoc(src)
