@@ -1,7 +1,7 @@
 local beginchild = {pandoc.Plain(pandoc.Str('//beginchild'))}
 local endchild = {pandoc.Plain(pandoc.Str('//endchild'))}
 
-function support_blankline(constructor)
+local function support_blankline(constructor)
   --[[
     Returns a function that splits a block into blocks separated by a Div
     element which defines blank lines.
@@ -73,7 +73,7 @@ local function nestablelist(elem)
   return elem
 end
 
-function support_strong(child)
+local function support_strong(child)
   --[[
     Returns a function that converts `***text***` as Span with the strong class
     (i.e., `[text]{.strong}`).
@@ -89,11 +89,28 @@ function support_strong(child)
   end
 end
 
+function noindent(block)
+  first = block.content[1]
+  if first and first.tag == "Span" then
+    for _,cls in ipairs(first.classes) do
+      if cls == "noindent" then
+        table.remove(block.content, 1)
+        return {
+          pandoc.RawBlock("review", "//noindent"),
+          block
+        }
+      end
+    end
+  end
+end
+
 return {
   {Emph = support_strong("Strong")},
   {Strong = support_strong("Emph")},
-  {Para = support_blankline(pandoc.Para)},
   {Plain = support_blankline(pandoc.Plain)},
+  {Plain = noindent},
+  {Para = support_blankline(pandoc.Para)},
+  {Para = noindent},
   -- blankline must be processed before lists
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
