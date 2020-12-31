@@ -19,20 +19,44 @@
 # THE SOFTWARE.
 
 require 'fileutils'
+require 'yaml'
+
+def make_mdre(ch, p2r, path)
+  if File.exist?(ch) # re file
+    FileUtils.cp(ch, path)
+  elsif File.exist?(ch.sub(/\.re\Z/, '.md')) # md file
+    system("#{p2r} #{ch.sub(/\.re\Z/, '.md')} > #{path}/#{ch}")
+  end
+end
 
 desc 'run pandoc2review'
 task :pandoc2review do
-  unless File.exist?('_refiles')
-    Dir.mkdir('_refiles')
-    File.write('_refiles/THIS_FOLDER_IS_TEMPORARY', '')
-  end
+  path = '_refiles'
   p2r = 'pandoc2review'
   if File.exist?('../../pandoc2review')
     p2r = '../../pandoc2review'
   end
-  Dir.glob('*.md') do |md|
-    re = File.basename(md, '.md') + '.re'
-    system("#{p2r} #{md} > _refiles/#{re}")
+
+  unless File.exist?(path)
+    Dir.mkdir(path)
+    File.write("#{path}/THIS_FOLDER_IS_TEMPORARY", '')
+  end
+
+  catalog = YAML.load_file('catalog.yml')
+  %w(PREDEF CHAPS APPENDIX POSTDEF).each do |block|
+    if catalog[block].kind_of?(Array)
+      catalog[block].each do |ch|
+        if ch.kind_of?(Hash) # Parts
+          ch.each_pair do |k, v|
+            make_mdre(k, p2r, path)
+            # Chapters
+            v.each {|subch| make_mdre(subch, p2r, path) }
+          end
+        elsif ch.kind_of?(String) # Chapters
+          make_mdre(ch, p2r, path)
+        end
+      end
+    end
   end
 end
 
