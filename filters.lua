@@ -89,17 +89,10 @@ local function support_strong(child)
   end
 end
 
-function noindent(block)
-  first = block.content[1]
-  if first and first.tag == "Span" then
-    for _,cls in ipairs(first.classes) do
-      if cls == "noindent" then
-        table.remove(block.content, 1)
-        return {
-          pandoc.RawBlock("review", "//noindent"),
-          block
-        }
-      end
+function noindent(span)
+  for _,cls in ipairs(span.classes) do
+    if cls == "noindent" then
+      return pandoc.RawInline("review", "//noindent\n")
     end
   end
 end
@@ -107,10 +100,9 @@ end
 return {
   {Emph = support_strong("Strong")},
   {Strong = support_strong("Emph")},
+  {Span = noindent},
   {Plain = support_blankline(pandoc.Plain)},
-  {Plain = noindent},
   {Para = support_blankline(pandoc.Para)},
-  {Para = noindent},
   -- blankline must be processed before lists
   {BulletList = nestablelist},
   {OrderedList = nestablelist},

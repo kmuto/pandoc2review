@@ -153,11 +153,11 @@ function SoftBreak(s)
 end
 
 function Plain(s)
-  return string.gsub(s, "\n", "")
+  return s
 end
 
 function Para(s)
-  return string.gsub(s, "\n", "")
+  return s
 end
 
 local function attr_val(attr, key)
