@@ -80,8 +80,7 @@ function support_strong(child)
     Pandoc treats `***` as Emph wrapped by Strong, but is not documented.
     This filter also supports the inverse order just for sure.
 
-    `pandoc -t review.lua --lua-filter strong.lua` further converts the text to
-    `@strong{text}`
+    The Lua writer, review.lua, further converts the text to `@strong{text}`
   ]]
   return function(elem)
     if (#elem.content == 1) and (elem.content[1].tag == child) then
