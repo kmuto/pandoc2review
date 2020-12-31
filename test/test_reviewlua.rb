@@ -427,11 +427,9 @@ EOB
  * chard
 
 //endchild
-
 EOB
 
-    STDERR.puts "Temporary suspended: #{__LINE__}"
-    # assert_equal expected, pandoc(src)
+    assert_equal expected, pandoc(src)
   end
 
   def test_enumerate
@@ -489,8 +487,7 @@ EOB
  2. two
 EOB
 
-    STDERR.puts "Temporary suspended: #{__LINE__}"
-    # assert_equal expected, pandoc(src)
+    assert_equal expected, pandoc(src)
 
     src = <<-EOB
  9) one
@@ -506,8 +503,7 @@ EOB
  2. subtwo
 EOB
     # XXX: pandoc2review can't handle nested elements except list. Re:VIEW doesn't care paren number and roman number enumerate by default also.
-    STDERR.puts "Temporary suspended: #{__LINE__}"
-    # assert_equal expected, pandoc(src)
+    assert_equal expected, pandoc(src)
   end
 
   def test_definition
