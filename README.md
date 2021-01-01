@@ -41,7 +41,7 @@ pandoc2review file > file.re
 
 ## Copyright
 
-Copyright 2020 Kenshi Muto
+Copyright 2020-2021 Kenshi Muto
 
 GNU General Public License Version 2
 
