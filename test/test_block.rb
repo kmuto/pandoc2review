@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'test_helper'
 
+# $ ruby test/run_test.rb test/test_block.rb
 # 現状はまだいろいろエラーになる
 # 解決したらtest_reviewlua.rbに合流
 
