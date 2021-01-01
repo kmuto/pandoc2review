@@ -1,5 +1,9 @@
-local beginchild = {pandoc.Plain(pandoc.Str('//beginchild'))}
-local endchild = {pandoc.Plain(pandoc.Str('//endchild'))}
+local function review_inline(x)
+    return pandoc.RawInline("review", x)
+end
+
+local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
+local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
 local function support_blankline(constructor)
   --[[
@@ -89,10 +93,26 @@ local function support_strong(child)
   end
 end
 
-function noindent(span)
+local function noindent(span)
   for _,cls in ipairs(span.classes) do
     if cls == "noindent" then
-      return pandoc.RawInline("review", "//noindent\n")
+      return review_inline("//noindent\n")
+    end
+  end
+end
+
+local function caption_div(div)
+  local content = div.content
+
+  for _,cls in ipairs(div.classes) do
+    if content[1].tag == "Header" then
+      -- convert to a captioned block command
+      local begin = pandoc.Para(content[1].content)
+      table.insert(begin.content, 1, review_inline("//" .. cls .. "["))
+      table.insert(begin.content, review_inline("]{"))
+      content[1] = begin
+      table.insert(content, pandoc.RawBlock("review", "}"))
+      return content
     end
   end
 end
@@ -106,5 +126,6 @@ return {
   -- blankline must be processed before lists
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
-  {DefinitionList = nestablelist}
+  {DefinitionList = nestablelist},
+  {Div = caption_div}
 }
