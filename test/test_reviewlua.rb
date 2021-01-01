@@ -104,7 +104,7 @@ EOB
     src = '`<$>`{.haskell}'
     assert_equal '@<tt>{<$>}', pandoc(src).chomp # XXX: ignore attribute
     src = '~~a~~'
-    assert_equal '@<u>{a}', pandoc(src).chomp # XXX: Re:VIEW doesn't support strikeout
+    assert_equal '@<del>{a}', pandoc(src).chomp
     src = '[Small]{.smallcaps}'
     assert_equal '◆→SMALLCAPS:Small←◆', pandoc(src).chomp
     # FIXME: more? underline?

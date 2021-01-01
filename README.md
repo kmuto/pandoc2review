@@ -35,12 +35,13 @@ pandoc2review file > file.re
 - `--disable-eaw`: Disable compositing a paragraph with Ruby's EAW library.
 - `--hideraw`: Hide raw inline/block with no review format specified.
 
-## Specification
+## Specification etc.
 - [pandoc2review における Markdown 形式処理の注意事項](markdown-format.ja.md)
+- [Re:VIEWプロジェクト内でシームレスにMarkdownファイルを使う](samples/reviewsample/ch01.md)
 
 ## Copyright
 
-Copyright 2020 Kenshi Muto
+Copyright 2020-2021 Kenshi Muto
 
 GNU General Public License Version 2
 
@@ -49,7 +50,8 @@ GNU General Public License Version 2
 - [@niszet](https://github.com/niszet)
 
 ## Changelog
-TBD.
+### 1.0
+- Initial Release.
 
 ---
 ## 日本語での説明
@@ -85,5 +87,6 @@ pandoc2review ファイル名 > ファイル名.re
 - `--disable-eaw`: Ruby の EAW ライブラリを使った段落構築を使いません
 - `--hideraw`: raw 判定されたインライン・ブロックを出力に含めません
 
-## 仕様
+## 仕様など
 - [pandoc2review における Markdown 形式処理の注意事項](markdown-format.ja.md)
+- [Re:VIEWプロジェクト内でシームレスにMarkdownファイルを使う](samples/reviewsample/ch01.md)

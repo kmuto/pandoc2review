@@ -11,7 +11,7 @@ local config = {
   bold = "b",
   italic = "i",
   code = "tt",
-  strike = "u", -- XXX: Re:VIEW doesn't support <strike>
+  strike = "del",
   underline = "u",
   lineblock = "source", --- XXX: Re:VIEW doesn't provide poem style by default
 }
