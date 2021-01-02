@@ -107,9 +107,9 @@ local function caption_div(div)
   if div.attributes.caption then
     local begin = pandoc.Para(markdown(div.attributes.caption))
     table.insert(begin.content, 1, review_inline("//" .. class .. "["))
-    table.insert(begin.content, review_inline("]{"))
+    table.insert(begin.content, review_inline("]{<P2RREMOVEBELOW/>"))
     table.insert(div.content, 1, begin)
-    table.insert(div.content, pandoc.RawBlock("review", "//}"))
+    table.insert(div.content, pandoc.RawBlock("review", "<P2RREMOVEABOVE/>//}"))
     return div.content
   end
 end

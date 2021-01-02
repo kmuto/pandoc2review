@@ -1018,11 +1018,9 @@ EOB
 
       expected = <<-EOB
 //#{tag}[foo]{
-
 Para1
 
 Para2
-
 //}
 EOB
 
@@ -1053,11 +1051,9 @@ EOB
 
       expected = <<-EOB
 //#{tag}[@<b>{foo} "]{
-
 Para1
 
 Para2
-
 //}
 EOB
 
