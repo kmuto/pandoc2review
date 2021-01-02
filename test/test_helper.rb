@@ -9,9 +9,9 @@ def pandoc(src, opts: nil, err: nil)
   end
   if err
     stdout, stderr, status = Open3.capture3(args, stdin_data: src)
-    return softbreak(stdout), stderr
+    return modify_result(stdout), stderr
   else
     stdout, status = Open3.capture2(args, stdin_data: src)
-    softbreak(stdout)
+    modify_result(stdout)
   end
 end

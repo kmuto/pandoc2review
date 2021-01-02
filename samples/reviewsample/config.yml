@@ -15,9 +15,6 @@ epubmaker:
   htmlext: xhtml
 texstyle: ["reviewmacro"]
 texdocumentclass: ["review-jsbook", "media=print,paper=a5"]
-# eBook
-# texdocumentclass: ["review-jsbook", "media=ebook,paper=a5"]
 pdfmaker:
-  coverimage: cover-a5.ai
   colophon: true
 contentdir: _refiles
