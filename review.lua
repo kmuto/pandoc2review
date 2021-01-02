@@ -512,6 +512,10 @@ end
 function Div(s, attr)
   local classes = attr_classes(attr)
 
+  if #classes == 0 then
+    return "\\{\n" .. s "\n//}"
+  end
+
   if classes["review-internal"] then
     s, _ = s:gsub(
       "%]{__REVIEW_INTERNAL_REMOVE_LINEBREAK_AFTER__\n", "]{"
