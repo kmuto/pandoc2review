@@ -8,150 +8,6 @@ require 'test_helper'
 # divの入れ子は無視していいかなという気持ち
 
 class BlockTest < Test::Unit::TestCase
-  def test_block_nodiv
-    # FIXME:pandoc的挙動的にこれでいいのかな
-    src = <<-EOB
-:::
-Para1
-
-Para2
-:::
-EOB
-
-    expected = <<-EOB
-::: Para1
-
-Para2 :::
-EOB
-
-    assert_equal expected, pandoc(src)
-  end
-
-  def test_block_emptydiv
-    # FIXME: これはどういう挙動にしたらよいものか…デフォルトブロック名を決める？
-    src = <<-EOB
-:::{}
-Para1
-
-Para2
-:::
-EOB
-
-    expected = <<-EOB
-//{
-Para1
-
-Para2
-//}
-EOB
-
-    assert_equal expected, pandoc(src)
-
-    src = <<-EOB
-<div>
-Para1
-
-Para2
-</div>
-EOB
-    assert_equal expected, pandoc(src)
-  end
-
-  def test_block_simpleblock
-    %w[note memo tip info warning important caution notice].each do |tag|
-      src = <<-EOB
-:::{.#{tag}}
-Para1
-
-Para2
-:::
-EOB
-
-      expected = <<-EOB
-//#{tag}{
-Para1
-
-Para2
-//}
-EOB
-
-      assert_equal expected, pandoc(src)
-
-      src = <<-EOB
-<div class="#{tag}">
-Para1
-
-Para2
-</div>
-EOB
-      assert_equal expected, pandoc(src)
-    end
-  end
-
-  def test_block_simpleblock_caption_ignoreid
-    # XXX: IDは無視し、キャプションを取り込むブロック
-    %w[note memo tip info warning important caution notice].each do |tag|
-      src = <<-EOB
-:::{.#{tag} #myid caption="foo"}
-Para1
-
-Para2
-:::
-EOB
-
-      expected = <<-EOB
-//#{tag}[foo]{
-Para1
-
-Para2
-//}
-EOB
-
-      assert_equal expected, pandoc(src)
-
-      src = <<-EOB
-<div class="#{tag}" id="myid" caption="foo">
-Para1
-
-Para2
-</div>
-EOB
-      assert_equal expected, pandoc(src)
-    end
-  end
-
-  def test_block_simpleblock_captionwithinline_ignoreid
-    # XXX: IDは無視し、キャプションを取り込むブロック。キャプションインラインはあきらめたほうがいいかな…
-    %w[note memo tip info warning important caution notice].each do |tag|
-      src = <<-EOB
-:::{.#{tag} #myid caption='**foo** "'}
-Para1
-
-Para2
-:::
-EOB
-
-      expected = <<-EOB
-//#{tag}[@<b>{foo} "]{
-Para1
-
-Para2
-//}
-EOB
-
-      assert_equal expected, pandoc(src)
-
-      src = <<-EOB
-<div class="#{tag}" id="myid" caption='**foo** "'>
-Para1
-
-Para2
-</div>
-EOB
-      assert_equal expected, pandoc(src)
-    end
-  end
-
   def test_block_texequation
     # idが必須でcaptionがオプションのもの・かつこの形での表現になりそうなのってtexequationくらい?
     # texequationは中をMarkdownパースされるのはダメで面倒そう…。
@@ -192,34 +48,29 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
-  def test_block_noindent
+  def test_block_texequation_omitclass
+    # クラス名省略パターン
+    # 数式があればクラス名省略してもよい、とできそう?
     src = <<-EOB
-\\noindent
-Para1
-:::
+:::{#myid caption="foo"}
+$$e=mc^2**A**$$
+</div>
 EOB
+
     expected = <<-EOB
-//noindent
-Para1
+//texequation[myid][foo]{
+e=mc^2**A**
+//}
 EOB
+
     assert_equal expected, pandoc(src)
-  end
 
-  def test_block_blankline
-    # XXX: atusyさん提案のblankline。\を2回続ける
     src = <<-EOB
-Para1\\
-\\
-Para2
+<div id="myid" caption="foo">
+$$e=mc^2**A**$$
+</div>
 EOB
 
-    expected = <<-EOB
-Para1
-
-//blankline
-
-Para2
-EOB
     assert_equal expected, pandoc(src)
   end
 end
