@@ -5,6 +5,10 @@ end
 local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
 local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
+local function markdown(text)
+  return(pandoc.read(text, "markdown").blocks[1].content)
+end
+
 local function support_blankline(constructor)
   --[[
     Returns a function that splits a block into blocks separated by a Div
@@ -43,6 +47,39 @@ local function support_blankline(constructor)
 
     return blocks
   end
+end
+
+local function solve_linebreaks(n)
+  if n == 1 then
+    return pandoc.LineBreak()
+  end
+
+  local s = "\n\n"
+
+  for i = 1,(n-1) do
+    s = s .. "//blankline"
+  end
+
+  return inline_review(s .. "\n\n")
+end
+
+local function blankline(inlines)
+  local ret = {}
+  local n_breaks = 0
+
+  for _,v in ipairs(inlines) do
+    if v.tag == "LineBreak" then
+      n_breaks = n_breaks + 1
+    elseif n_breaks > 0 then
+      table.insert(ret, solve_linebreaks(n_breaks))
+      table.insert(ret, elem)
+      n_breaks = 0
+    else
+      table.insert(ret, elem)
+    end
+  end
+
+  return ret
 end
 
 local function nestablelist(elem)
@@ -93,34 +130,26 @@ local function support_strong(child)
   end
 end
 
-local function noindent(span)
-  for _,cls in ipairs(span.classes) do
-    if cls == "noindent" then
-      return review_inline("//noindent\n")
-    end
-  end
-end
-
 local function caption_div(div)
-  local content = div.content
+  local class = div.classes[1]
 
-  for _,cls in ipairs(div.classes) do
-    if content[1].tag == "Header" then
-      -- convert to a captioned block command
-      local begin = pandoc.Para(content[1].content)
-      table.insert(begin.content, 1, review_inline("//" .. cls .. "["))
-      table.insert(begin.content, review_inline("]{"))
-      content[1] = begin
-      table.insert(content, pandoc.RawBlock("review", "//}"))
-      return content
-    end
+  if class == nil then
+    return nil
+  end
+
+  if div.attributes.caption then
+    local begin = pandoc.Para(markdown(div.attributes.caption))
+    table.insert(begin.content, 1, review_inline("//" .. class .. "["))
+    table.insert(begin.content, review_inline("]{"))
+    table.insert(div.content, 1, begin)
+    table.insert(div.content, pandoc.RawBlock("review", "//}"))
+    return content
   end
 end
 
 return {
   {Emph = support_strong("Strong")},
   {Strong = support_strong("Emph")},
-  {Span = noindent},
   {Plain = support_blankline(pandoc.Plain)},
   {Para = support_blankline(pandoc.Para)},
   -- blankline must be processed before lists
