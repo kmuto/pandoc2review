@@ -49,39 +49,6 @@ local function support_blankline(constructor)
   end
 end
 
-local function solve_linebreaks(n)
-  if n == 1 then
-    return pandoc.LineBreak()
-  end
-
-  local s = "\n\n"
-
-  for i = 1,(n-1) do
-    s = s .. "//blankline"
-  end
-
-  return inline_review(s .. "\n\n")
-end
-
-local function blankline(inlines)
-  local ret = {}
-  local n_breaks = 0
-
-  for _,v in ipairs(inlines) do
-    if v.tag == "LineBreak" then
-      n_breaks = n_breaks + 1
-    elseif n_breaks > 0 then
-      table.insert(ret, solve_linebreaks(n_breaks))
-      table.insert(ret, elem)
-      n_breaks = 0
-    else
-      table.insert(ret, elem)
-    end
-  end
-
-  return ret
-end
-
 local function nestablelist(elem)
   --[[
     Support items with multiple blocks in
