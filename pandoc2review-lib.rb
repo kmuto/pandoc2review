@@ -15,7 +15,7 @@ def main
       puts "#{file} not exist. skip."
       next
     end
-    args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'nestedlist.lua'), '--lua-filter', File.join(bindir, 'strong.lua')]
+    args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'filters.lua')]
 
     if file =~ /\.md$/i
       args += ['-f', 'markdown-auto_identifiers-smart+east_asian_line_breaks']
