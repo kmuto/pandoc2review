@@ -47,6 +47,41 @@ ABC
 日本語 ABC 漢字
 ```
 
+強制改行は行末に `\` を付けます。`@<br>{}` に変換されます。
+
+```
+This paragraph has \
+br.
+↓
+This paragraph has@<br>{}br.
+```
+
+段落字下げをデフォルトとするタイプセット環境 (TeX など) においてその段落の字下げを抑制するには、段落前に `\noindent` 行を入れます。`//noindent` に変換されます。
+
+```
+\noindent
+don't indent this.
+↓
+//noindent
+don't indent this.
+```
+
+## 空行
+
+全角スペースだけの段落を入れる方法もありますが、Re:VIEW の `//blankline` を入れるには、`\` を行末とその次の行の2回記述します。
+
+```
+Blankline below.\
+\
+Blankline above.
+↓
+Blankline below.
+
+//blankline
+
+Blankline above.
+```
+
 ## 見出し
 Setext 形式・ATX 形式は問いません。見出しレベル 7 以上は、re ファイルに変換することはできますが、Re:VIEW のコンパイル時にエラーになります。
 
@@ -208,6 +243,7 @@ Berkeley, CA 94718
 
 - Markdown での空行を項目の間に挟む「ゆるいリスト」は無視され、継続した箇条書きになります。
 - 改行でテキストを継続することは、「怠惰な記法」を含めて可能ですが、段落と同様、自然言語上の意味を見ずに前後のスペースは削除されます。
+- 箇条書き内での強制改行は行末の `\` で表現できます。
 - 「箇条書きの子要素」は `//beginchild`・`//endchild` で囲まれて表現されます。
 
 ### ビュレット (ナカグロ) 箇条書き
@@ -429,7 +465,8 @@ HTML の生タグであるブロック `<div>`、インライン `<span>` の属
 ### Div
 `<div>` HTML タグを使い、`class` 属性で Re:VIEW のブロック命令を指定できます。
 
-挙動としてはシンプルで、`class` 属性の値をそのままブロック命令にします。(★)
+挙動としてはシンプルで、`class` 属性の値をそのままブロック命令にします。Markdown のインライン命令・ブロック命令などは変換された状態で入ります。
+
 
 ```
 <div class="note">
@@ -445,9 +482,45 @@ def
 //}
 ```
 
-- Markdown のインライン命令・ブロック命令などが変換された状態で入ります。
-- 変換時に Re:VIEW のブロック命令にキャプションやオプションを指定することはできません。(★)
-- //tsize, //bibpaper, //noindent, //blankline などの単一行ブロック命令は指定できません。(★)
+`caption` 属性でキャプションを付けることができます。キャプションには Markdown のインライン命令を指定できます。
+
+```
+<div class="note" caption="see **abc**">
+**abc**
+
+def
+</div>
+↓
+//note[see @<b>{abc}]{
+
+@<b>{abc}
+
+def
+
+//}
+```
+
+- 単一行ブロック命令の //tsize, //bibpaper は指定できません(★)。 Markdown ファイル上にそのまま Re:VIEW と同じ記法で書いておくという手もあります。
+
+```
+//tsize[|latex|30,30,20]
+
+|header1|header2|header3|
+|:--|--:|:--:|
+|align left|align right|align center|
+|a|b|c|
+
+↓
+
+//tsize[|latex|30,30,20]
+
+//table{
+header1 @<dtp>{table align=right}header2        @<dtp>{table align=center}header3
+--------------
+align left      @<dtp>{table align=right}align right    @<dtp>{table align=center}align center
+a       @<dtp>{table align=right}b      @<dtp>{table align=center}c
+//}
+```
 
 ### Span
 `<span>` HTML タグを使い、`class` 属性で Re:VIEW のインライン命令を指定できます。以下に対応しています。
@@ -460,7 +533,7 @@ bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq
 @<hidx>{index}
 ```
 
-キーワード (`kw`), ルビ (`ruby`) は Re:VIEW では第二引数があるので、属性で指定します。
+キーワード (`kw`), ルビ (`ruby`) は Re:VIEW では第2引数があるので、属性で指定します。
 
 ```
 <span kw="supplement">abc</span>
