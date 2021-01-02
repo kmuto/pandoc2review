@@ -678,12 +678,12 @@ def
 EOB
 
     expected = <<-EOB
-//note[hello]{
+//note{
+== hello
 
 abc
 
 def
-
 //}
 EOB
     assert_equal expected, pandoc(src)
