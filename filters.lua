@@ -2,10 +2,6 @@ local function review_inline(x)
     return pandoc.RawInline("review", x)
 end
 
-local function review_block(x)
-    return pandoc.RawBlock("review", x)
-end
-
 local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
 local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
