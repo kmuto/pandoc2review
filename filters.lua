@@ -114,11 +114,27 @@ local function caption_div(div)
   end
 end
 
+local function noindent(para)
+  first = para.content[1]
+
+  if ((first.tag == "RawInline") and
+      (first.format == "tex") and
+      (first.text:match("^\\noindent%s*"))) then
+    para.content[1] = review_inline("//noindent\n")
+    if para.content[2].tag == "SoftBreak" then
+      table.remove(para.content, 2)
+    end
+  end
+
+  return para
+end
+
 return {
   {Emph = support_strong("Strong")},
   {Strong = support_strong("Emph")},
   {Plain = support_blankline(pandoc.Plain)},
   {Para = support_blankline(pandoc.Para)},
+  {Para = noindent},
   -- blankline must be processed before lists
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
