@@ -117,35 +117,37 @@ Para2
 </div>
 EOB
       assert_equal expected, pandoc(src)
-
     end
   end
 
-  def test_block_simpleblock_divheader_ignoreid
-    # FIXME: 今はエラーになる。
-    # XXX: IDは無視し、キャプションを取り込むブロック。キャプションは最初の行が#系で表されていれば見出しとしたい。2つめ以降のはそのまま(Re:VIEW的にはイレギュラーだけど…)。
+  def test_block_simpleblock_captionwithinline_ignoreid
+    # XXX: IDは無視し、キャプションを取り込むブロック。キャプションインラインはあきらめたほうがいいかな…
     %w[note memo tip info warning important caution notice].each do |tag|
       src = <<-EOB
-<div class="#{tag}" id="myid">
-## foo **bold**
+:::{.#{tag} #myid caption='**foo** "'}
 Para1
 
-Para 2
-
-### foo2
-</div>
+Para2
+:::
 EOB
 
       expected = <<-EOB
-//#{tag}[foo @<b>{bold}]{
+//#{tag}[@<b>{foo} "]{
 Para1
 
-Para 2
-
-=== foo2
+Para2
 //}
 EOB
 
+      assert_equal expected, pandoc(src)
+
+      src = <<-EOB
+<div class="#{tag}" id="myid" caption='**foo** "'>
+Para1
+
+Para2
+</div>
+EOB
       assert_equal expected, pandoc(src)
     end
   end
@@ -191,9 +193,8 @@ EOB
   end
 
   def test_block_noindent
-    # FIXME: noindentの表現方法。div囲み？ spanも微妙な気がする
     src = <<-EOB
-::: {.noindent}
+\\noindent
 Para1
 :::
 EOB
@@ -205,7 +206,7 @@ EOB
   end
 
   def test_block_blankline
-    # XXX: blanklineの表現方法。atusyさん提案でいく？
+    # XXX: atusyさん提案のblankline。\を2回続ける
     src = <<-EOB
 Para1\\
 \\
