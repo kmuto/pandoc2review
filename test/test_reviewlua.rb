@@ -332,11 +332,14 @@ EOB
   list item.
 * and my second
 list item.
+* this item has \\
+  br.
 EOB
 
     expected = <<-EOB
  * here is my first list item.
  * and my second list item.
+ * this item has@<br>{}br.
 EOB
 
     assert_equal expected, pandoc(src)
@@ -871,6 +874,206 @@ EOB
 @<m>$\\displaystyle{} \\alpha = \\beta\\label{eqone}$ Refer equation ().
 EOB
     assert_equal expected, pandoc(src, opts: '-M hideraw')
+  end
+
+  def test_block_noindent
+    src = <<-EOB
+\\noindent
+Para1
+EOB
+    expected = <<-EOB
+//noindent
+Para1
+EOB
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_block_blankline
+    src = <<-EOB
+Para1\\
+\\
+Para2
+EOB
+
+    expected = <<-EOB
+Para1
+
+//blankline
+
+Para2
+EOB
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+- foo \\
+\\
+bar
+EOB
+
+    expected = <<-EOB
+ * foo
+
+//beginchild
+
+//blankline
+
+bar
+
+//endchild
+EOB
+    # XXX:this is not bug, but is specification
+    assert_equal expected, pandoc(src)
+  end
+
+
+  def test_block_nodiv
+    # FIXME:Is it expected behavior on pandoc?
+    src = <<-EOB
+:::
+Para1
+
+Para2
+:::
+EOB
+
+    expected = <<-EOB
+::: Para1
+
+Para2 :::
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_block_emptydiv
+    # FIXME: should define default block name?
+    src = <<-EOB
+:::{}
+Para1
+
+Para2
+:::
+EOB
+
+    expected = <<-EOB
+//{
+Para1
+
+Para2
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+<div>
+Para1
+
+Para2
+</div>
+EOB
+    assert_equal expected, pandoc(src)
+  end
+
+  def test_block_simpleblock
+    %w[note memo tip info warning important caution notice].each do |tag|
+      src = <<-EOB
+:::{.#{tag}}
+Para1
+
+Para2
+:::
+EOB
+
+      expected = <<-EOB
+//#{tag}{
+Para1
+
+Para2
+//}
+EOB
+
+      assert_equal expected, pandoc(src)
+
+      src = <<-EOB
+<div class="#{tag}">
+Para1
+
+Para2
+</div>
+EOB
+      assert_equal expected, pandoc(src)
+    end
+  end
+
+  def test_block_simpleblock_caption_ignoreid
+    %w[note memo tip info warning important caution notice].each do |tag|
+      src = <<-EOB
+:::{.#{tag} #myid caption="foo"}
+Para1
+
+Para2
+:::
+EOB
+
+      expected = <<-EOB
+//#{tag}[foo]{
+
+Para1
+
+Para2
+
+//}
+EOB
+
+      assert_equal expected, pandoc(src)
+
+      src = <<-EOB
+<div class="#{tag}" id="myid" caption="foo">
+
+Para1
+
+Para2
+
+</div>
+EOB
+      assert_equal expected, pandoc(src)
+    end
+  end
+
+  def test_block_simpleblock_captionwithinline_ignoreid
+    %w[note memo tip info warning important caution notice].each do |tag|
+      src = <<-EOB
+:::{.#{tag} #myid caption='**foo** "'}
+Para1
+
+Para2
+:::
+EOB
+
+      expected = <<-EOB
+//#{tag}[@<b>{foo} "]{
+
+Para1
+
+Para2
+
+//}
+EOB
+
+      assert_equal expected, pandoc(src)
+
+      src = <<-EOB
+<div class="#{tag}" id="myid" caption='**foo** "'>
+
+Para1
+
+Para2
+
+</div>
+EOB
+      assert_equal expected, pandoc(src)
+    end
   end
 
   def test_table

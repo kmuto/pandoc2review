@@ -242,3 +242,21 @@ code内 '` \ -- --- ’ – —
 ## foo {.unnumbered}
 ## foo {.unnumbered .unlisted}
 ## foo {-}
+
+This paragraph has \
+br.
+
+\noindent
+don't indent this.
+
+Blankline below.\
+\
+Blankline above.
+
+<div class="note" caption="see **abc**">
+**abc**
+
+def
+</div>
+
+//tsize[|idgxml|4,10]
