@@ -110,7 +110,7 @@ local function caption_div(div)
     table.insert(begin.content, review_inline("]{"))
     table.insert(div.content, 1, begin)
     table.insert(div.content, pandoc.RawBlock("review", "//}"))
-    return content
+    return div.content
   end
 end
 
