@@ -4,9 +4,9 @@
 
 -- config
 local config = {
-  use_header_id = "true",
-  use_hr = "true",
-  use_table_align = "true",
+  use_header_id = true,
+  use_hr = true,
+  use_table_align = true,
 
   bold = "b",
   italic = "i",
@@ -585,46 +585,10 @@ try_catch {
 
 if (metadata) then
   -- Load config from YAML
-  if (use_header_id) then
-    if (stringify(metadata.use_header_id) == "false") then
-      config.use_header_id = nil
+  for k,v in pairs(config) do
+    if type(metadata[k]) == type(v) then
+      config[k] = metadata[k]
     end
-  end
-
-  if (metadata.use_hr) then
-    if (stringify(metadata.use_hr) == "false") then
-      config.use_hr = nil
-    end
-  end
-
-  if (metadata.use_table_align) then
-    if (stringify(metadata.use_table_align) == "false") then
-      config.use_table_align = nil
-    end
-  end
-
-  if (metadata.bold) then
-    config.bold = stringify(metadata.bold)
-  end
-
-  if (metadata.italic) then
-    config.italic = stringify(metadata.italic)
-  end
-
-  if (metadata.code) then
-    config.code = stringify(metadata.code)
-  end
-
-  if (metadata.strike) then
-    config.strike = stringify(metadata.strike)
-  end
-
-  if (metadata.underline) then
-    config.underline = stringify(metadata.underline)
-  end
-
-  if (metadata.lineblock) then
-    config.lineblock = stringify(metadata.lineblock)
   end
 end
 
