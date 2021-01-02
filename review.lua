@@ -511,6 +511,7 @@ end
 
 function Div(s, attr)
   local classes = attr_classes(attr)
+
   if classes["review-internal"] then
     s, _ = s:gsub(
       "%]{__REVIEW_INTERNAL_REMOVE_LINEBREAK_AFTER__\n", "]{"
@@ -529,7 +530,10 @@ function Div(s, attr)
     return table.concat(buffer, "\n")
   end
 
-  return "//" .. attr_val(attr, "class") .. "{\n" .. s .. "\n//}"
+  for cls,_ in pairs(classes) do
+    s = "//" .. cls .. "{\n" .. s .. "\n//}"
+  end
+  return s
 end
 
 function Span(s, attr)
