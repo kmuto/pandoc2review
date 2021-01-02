@@ -3,7 +3,7 @@ require 'test_helper'
 
 class ReviewLuaTest < Test::Unit::TestCase
   def pandoc(src, opts: nil, err: nil)
-    args = 'pandoc -t review.lua --lua-filter=nestedlist.lua --lua-filter=strong.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
+    args = 'pandoc -t review.lua --lua-filter=filters.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
     if opts
       args += ' ' + opts
     end
