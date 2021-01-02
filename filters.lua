@@ -2,6 +2,10 @@ local function review_inline(x)
     return pandoc.RawInline("review", x)
 end
 
+local function review_block(x)
+    return pandoc.RawBlock("review", x)
+end
+
 local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
 local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
@@ -107,10 +111,16 @@ local function caption_div(div)
   if div.attributes.caption then
     local begin = pandoc.Para(markdown(div.attributes.caption))
     table.insert(begin.content, 1, review_inline("//" .. class .. "["))
-    table.insert(begin.content, review_inline("]{"))
+    table.insert(
+      begin.content,
+      review_inline("]{__REVIEW_INTERNAL_REMOVE_LINEBREAK_AFTER__"))
     table.insert(div.content, 1, begin)
-    table.insert(div.content, pandoc.RawBlock("review", "//}"))
-    return div.content
+    table.insert(
+      div.content,
+      review_block("__REVIEW_INTERNAL_REMOVE_LINEBREAK_BEFORE__//}")
+    )
+    div.classes = {'review-internal'}
+    return div
   end
 end
 

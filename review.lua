@@ -510,6 +510,16 @@ function SmallCaps(s)
 end
 
 function Div(s, attr)
+  local classes = attr_classes(attr)
+  if classes["review-internal"] then
+    s, _ = s:gsub(
+      "%]{__REVIEW_INTERNAL_REMOVE_LINEBREAK_AFTER__\n", "]{"
+    ):gsub(
+      "\n__REVIEW_INTERNAL_REMOVE_LINEBREAK_BEFORE__//}", "//}"
+    )
+    return s
+  end
+
   local blankline = attr_val(attr, "blankline")
   if blankline ~= "" then
     local buffer = {}
