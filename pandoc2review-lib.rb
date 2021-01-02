@@ -40,7 +40,7 @@ def main
       STDERR.puts stderr
       exit 1
     end
-    print softbreak(stdout)
+    print modify_result(stdout)
   end
 end
 
@@ -73,8 +73,10 @@ def parse_args
   end
 end
 
-def softbreak(s)
-  s.gsub('<P2RBR/>') do
+def modify_result(s)
+  s.gsub("<P2RREMOVEBELOW/>\n", '').
+    gsub("\n<P2RREMOVEABOVE/>", '').
+    gsub('<P2RBR/>') do
     tail = $`[-1]
     head = $'[0]
     return '' if tail.nil? || head.nil?
