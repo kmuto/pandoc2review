@@ -510,6 +510,15 @@ function SmallCaps(s)
 end
 
 function Div(s, attr)
+  local blankline = attr_val(attr, "blankline")
+  if blankline ~= "" then
+    local buffer = {}
+    for i = 1, tonumber(blankline) do
+      table.insert(buffer, "//blankline")
+    end
+    return table.concat(buffer, "\n")
+  end
+
   local classes = attr_classes(attr)
 
   if next(classes) == nil then
@@ -523,15 +532,6 @@ function Div(s, attr)
       "\n<P2RREMOVEABOVE/>//}", "//}"
     )
     return s
-  end
-
-  local blankline = attr_val(attr, "blankline")
-  if blankline ~= "" then
-    local buffer = {}
-    for i = 1, tonumber(blankline) do
-      table.insert(buffer, "//blankline")
-    end
-    return table.concat(buffer, "\n")
   end
 
   for cls,_ in pairs(classes) do
