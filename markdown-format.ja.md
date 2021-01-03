@@ -347,7 +347,7 @@ Third paragraph of definition 2.
 - `*`、`_`: `@<i>` (斜体)
 - `**`、`__`: `@<b>` (太字)
 - `***`、`___`: `@<strong>` (太字。Markdown では太字+斜体)
-- `~~`: `@<u>` (下線。Markdown では取り消し線、Re:VIEW には該当するスタイルが現時点で存在しない(★))
+- `~~`: `@<del>` (取り消し線)
 - `^`: `@<sup>` (上付き)
 - `~`: `@<sub>` (下付き)
 - バッククォート: `@<tt>` (等幅コード文字) 属性は無視されます。
@@ -358,7 +358,7 @@ Third paragraph of definition 2.
 
 扱えるのは TeX 数式形式のみです。
 
-`$〜$` でインライン表現、`$$〜$$` で独立式表現の数式になります。ただし、独立式表現は単に表現上独立式に見せるために `\displaystyle{}` を付けるだけです。Re:VIEW の独立式用の `//texequation` ブロックになるわけではありません。(★)
+`$〜$` でインライン表現、`$$〜$$` で独立式表現の数式になります。ただし、単純に独立式表現を置いたときには、表現上独立式に見せるために `\displaystyle{}` を付けるだけです。
 
 ```
 inline $e^{\pi i}= -1$
@@ -368,6 +368,31 @@ block $$e^{\pi i}= -1$$
 inline @<m>$e^{\pi i}= -1$
 
 block @<m>$\\displaystyle{}e^{pi i}= -1$
+```
+
+Re:VIEW の独立式用の `//texequation` ブロックにするには、`$$〜$$` の数式を Div で囲みます。クラスには `.texequation` を指定しますが、数式のみ入っている Div 囲みは `.texequation` と見なされるので省略することもできます。
+
+
+```
+:::{.texequation #eq1 caption="Sample equation"}
+$$e^{\pi i}= -1$$
+:::
+
+↓
+
+//texequation[eq1][Sample equation]{
+e^{\pi i}= -1
+//}
+
+:::{#eq1 caption="Sample equation"} ←クラス名省略
+$$e^{\pi i}= -1$$
+:::
+
+↓
+
+//texequation[eq1][Sample equation]{
+e^{\pi i}= -1
+//}
 ```
 
 TeX の追加マクロは、利用する Re:VIEW プロジェクトフォルダの sty/review-custom.sty に記述することで利用できます。

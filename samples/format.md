@@ -137,6 +137,8 @@ class Hoge
 end
 ```
 
+//tsize[|idgxml|4,10]
+
 |header1|header2|header3|
 |:--|--:|:--:|
 |align left|align right|align center|
@@ -259,4 +261,16 @@ Blankline above.
 def
 </div>
 
-//tsize[|idgxml|4,10]
+$$e=mc^2$$
+
+<div id="mc2" caption="This $e$">
+$$e=mc^2$$
+</div>
+
+:::{#mc2 caption="This $e$"}
+$$e=mc^2$$
+:::
+
+:::{.texequation #mc2}
+$$e=mc^2$$
+:::
