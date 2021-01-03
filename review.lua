@@ -215,7 +215,7 @@ function Header(level, s, attr)
     "")))))
   )
 
-  if (config.use_header_id and attr.id ~= "" and attr.id ~= s) then
+  if ((config.use_header_id == "true") and attr.id ~= "" and attr.id ~= s) then
     headmark = headmark .. "{" .. attr.id .. "}"
   end
 
@@ -223,7 +223,7 @@ function Header(level, s, attr)
 end
 
 function HorizontalRule()
-  if (config.use_hr) then
+  if (config.use_hr == "true") then
     return "//hr"
   else
     return ""
@@ -412,7 +412,7 @@ function Table(caption, aligns, widths, headers, rows)
   local tmp = {}
   for i, h in pairs(headers) do
     align = html_align(aligns[i])
-    if (config.use_table_align and align ~= "") then
+    if (config.use_table_align == "true") and (align ~= "") then
       h = format_inline("dtp", "table align=" .. align) .. h
     end
     table.insert(tmp, h)
@@ -423,7 +423,7 @@ function Table(caption, aligns, widths, headers, rows)
     tmp = {}
       for i, c in pairs(row) do
       align = html_align(aligns[i])
-      if (config.use_table_align and align ~= "") then
+      if (config.use_table_align == "true") and (align ~= "") then
         c = format_inline("dtp", "table align=" .. align) .. c
       end
       table.insert(tmp, c)
@@ -603,46 +603,10 @@ try_catch {
 
 if (metadata) then
   -- Load config from YAML
-  if (use_header_id) then
-    if (stringify(metadata.use_header_id) == "false") then
-      config.use_header_id = nil
+  for k,v in pairs(config) do
+    if metadata[k] ~= nil then
+      config[k] = stringify(metadata[k])
     end
-  end
-
-  if (metadata.use_hr) then
-    if (stringify(metadata.use_hr) == "false") then
-      config.use_hr = nil
-    end
-  end
-
-  if (metadata.use_table_align) then
-    if (stringify(metadata.use_table_align) == "false") then
-      config.use_table_align = nil
-    end
-  end
-
-  if (metadata.bold) then
-    config.bold = stringify(metadata.bold)
-  end
-
-  if (metadata.italic) then
-    config.italic = stringify(metadata.italic)
-  end
-
-  if (metadata.code) then
-    config.code = stringify(metadata.code)
-  end
-
-  if (metadata.strike) then
-    config.strike = stringify(metadata.strike)
-  end
-
-  if (metadata.underline) then
-    config.underline = stringify(metadata.underline)
-  end
-
-  if (metadata.lineblock) then
-    config.lineblock = stringify(metadata.lineblock)
   end
 end
 
