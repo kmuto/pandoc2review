@@ -519,7 +519,25 @@ function Div(s, attr)
     return table.concat(buffer, "\n")
   end
 
-  return "//" .. attr_val(attr, "class") .. "{\n" .. s .. "\n//}"
+  local classes = attr_classes(attr)
+
+  if next(classes) == nil then
+    return "//{\n" .. s .. "\n//}"
+  end
+
+  if classes["review-internal"] then
+    s, _ = s:gsub(
+      "%]{<P2RREMOVEBELOW/>\n", "]{"
+    ):gsub(
+      "\n<P2RREMOVEABOVE/>//}", "//}"
+    )
+    return s
+  end
+
+  for cls,_ in pairs(classes) do
+    s = "//" .. cls .. "{\n" .. s .. "\n//}"
+  end
+  return s
 end
 
 function Span(s, attr)

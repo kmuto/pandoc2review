@@ -110,7 +110,8 @@ local function caption_div(div)
     table.insert(begin.content, review_inline("]{<P2RREMOVEBELOW/>"))
     table.insert(div.content, 1, begin)
     table.insert(div.content, pandoc.RawBlock("review", "<P2RREMOVEABOVE/>//}"))
-    return div.content
+    div.classes = {"review-internal"}
+    return div
   end
 end
 
