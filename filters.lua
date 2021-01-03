@@ -99,13 +99,32 @@ end
 
 local function caption_div(div)
   local class = div.classes[1]
+  local caption = div.attributes.caption
+
+  if ((#div.content == 1) and
+      (#div.content[1].content == 1) and
+      (div.content[1].content[1].tag == "Math") and
+      (div.identifier)) then
+    class = "texequation[" .. div.identifier .. "]"
+    local math_text = (div.content[1].content[1].text
+      ):gsub("^\n+", ""):gsub("\n+$", "")
+
+    if caption == nil then
+      return pandoc.RawBlock(
+        "review",
+        "//" .. class .. "{\n" .. math_text .. "\n//}"
+      )
+    end
+
+    div.content = {pandoc.RawBlock("review", math_text)}
+  end
 
   if class == nil then
     return nil
   end
 
-  if div.attributes.caption then
-    local begin = pandoc.Para(markdown(div.attributes.caption))
+  if caption then
+    local begin = pandoc.Para(markdown(caption))
     table.insert(begin.content, 1, review_inline("//" .. class .. "["))
     table.insert(begin.content, review_inline("]{<P2RREMOVEBELOW/>"))
     table.insert(div.content, 1, begin)
