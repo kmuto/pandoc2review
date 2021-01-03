@@ -1072,6 +1072,61 @@ EOB
     end
   end
 
+  def test_block_texequation
+    src = <<-EOB
+:::{.texequation #myid}
+$$e=mc^2**A**$$
+:::
+EOB
+
+    expected = <<-EOB
+//texequation[myid]{
+e=mc^2**A**
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+:::{.texequation #myid caption="foo"}
+$$e=mc^2**A**$$
+:::
+EOB
+
+    expected = <<-EOB
+//texequation[myid][foo]{
+e=mc^2**A**
+//}
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+<div class="texequation" id="myid" caption="foo">
+$$e=mc^2**A**$$
+</div>
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    # omit class
+    src = <<-EOB
+:::{#myid caption="foo"}
+$$e=mc^2**A**$$
+:::
+EOB
+
+    assert_equal expected, pandoc(src)
+
+    src = <<-EOB
+<div id="myid" caption="foo">
+$$e=mc^2**A**$$
+</div>
+EOB
+
+    assert_equal expected, pandoc(src)
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default
