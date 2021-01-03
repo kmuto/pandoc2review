@@ -74,9 +74,7 @@ def parse_args
 end
 
 def modify_result(s)
-  s.gsub("<P2RREMOVEBELOW/>\n", '').
-    gsub("\n<P2RREMOVEABOVE/>", '').
-    gsub('<P2RBR/>') do
+  s.gsub('<P2RBR/>') do
     tail = $`[-1]
     head = $'[0]
     return '' if tail.nil? || head.nil?
