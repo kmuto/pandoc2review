@@ -39,3 +39,9 @@ luac.out
 *.x86_64
 *.hex
 
+# RubyGems
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/pkg/

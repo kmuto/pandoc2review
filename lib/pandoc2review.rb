@@ -6,7 +6,7 @@ require 'pathname'
 require 'open3'
 
 def main
-  bindir = Pathname.new(__FILE__).realpath.dirname
+  luadir = Pathname.new(__FILE__).realpath.dirname
 
   parse_args
 
@@ -15,7 +15,7 @@ def main
       puts "#{file} not exist. skip."
       next
     end
-    args = ['pandoc', '-t', File.join(bindir, 'review.lua'), '--lua-filter', File.join(bindir, 'filters.lua')]
+    args = ['pandoc', '-t', File.join(luadir, 'review.lua'), '--lua-filter', File.join(luadir, 'filters.lua')]
 
     if file =~ /\.md$/i
       args += ['-f', 'markdown-auto_identifiers-smart+east_asian_line_breaks']
