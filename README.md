@@ -11,6 +11,11 @@
 
 ## Installation
 
+### RubyGems. Recommended
+1. Setup [Ruby](https://www.ruby-lang.org/) (any versions) and [Pandoc](https://pandoc.org/) (newer is better).
+2. Do `gem install pandoc2review`.
+
+### Custom
 1. Setup [Ruby](https://www.ruby-lang.org/) (any versions) and [Pandoc](https://pandoc.org/) (newer is better).
 2. Clone this repository, or download release file and extract somewhere.
 3. Do `bundle install` in extracted `pandoc2review` folder.
@@ -75,7 +80,11 @@ GNU General Public License Version 2
 - **ユースケース 2:** Markdown を原稿形式として使い続けながら、Re:VIEW の組版環境を使うことができます。
 
 ## インストール
+### RubyGems (推奨)
+1. [Ruby](https://www.ruby-lang.org/) (バージョンは問いません) および [Pandoc](https://pandoc.org/) (新しいものほどよいです) をセットアップします。
+2. `gem install pandoc2review` を実行します。
 
+### カスタム
 1. [Ruby](https://www.ruby-lang.org/) (バージョンは問いません) および [Pandoc](https://pandoc.org/) (新しいものほどよいです) をセットアップします。
 2. このリポジトリをクローンするか、リリースファイルをダウンロードして適当な場所に展開します。
 3. 展開した `pandoc2review` フォルダ内で、`bundle install` を実行します。
