@@ -3,15 +3,16 @@ require 'fileutils'
 require 'open3'
 
 def pandoc(src, opts: nil, err: nil)
-  args = 'pandoc -t lib/review.lua --lua-filter=lib/filters.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
+  args = 'pandoc -t lua/review.lua --lua-filter=lua/filters.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
+  p2r = Pandoc2ReVIEW.new
   if opts
     args += ' ' + opts
   end
   if err
     stdout, stderr, status = Open3.capture3(args, stdin_data: src)
-    return modify_result(stdout), stderr
+    [p2r.modify_result(stdout), stderr]
   else
     stdout, status = Open3.capture2(args, stdin_data: src)
-    modify_result(stdout)
+    p2r.modify_result(stdout)
   end
 end
