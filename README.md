@@ -50,6 +50,14 @@ GNU General Public License Version 2
 - [@niszet](https://github.com/niszet)
 
 ## Changelog
+### 1.1
+- Improve block (Div) convertion, in particular of caption and texequation.
+- Add sample how you can integrate Markdown files to your Re:VIEW project folder.
+- Add blankline support.
+- Add noindent support.
+- Use `@<br>{}` for Linebreak instead of linefeed.
+- Refactoring.
+
 ### 1.0
 - Initial Release.
 
