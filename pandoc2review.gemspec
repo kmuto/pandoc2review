@@ -3,7 +3,7 @@ Gem::Specification.new do |spec|
   # spec.version       = Pandoc2review::VERSION
   spec.version       = "1.1.0"
   spec.authors       = ["kmuto"]
-  spec.email         = ["kmuto@debian.org"]
+  spec.email         = ["kmuto@kmuto.jp"]
 
   spec.summary       = %q{Re:VIEW Filter/Writer for Pandoc.}
   spec.description   = %q{Re:VIEW Filter/Writer for Pandoc.}
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ["lib", "lua"]
 
   spec.add_dependency('unicode-eaw')
   spec.add_development_dependency('simplecov')

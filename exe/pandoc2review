@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright 2020 Kenshi Muto
+# Copyright 2020-2021 Kenshi Muto
+
+require 'pathname'
+bindir = Pathname.new(__FILE__).realpath.dirname
+$LOAD_PATH.unshift((bindir + '../lib').realpath)
+
 require 'pandoc2review'
-main
+
+p2r = Pandoc2ReVIEW.new
+p2r.main
