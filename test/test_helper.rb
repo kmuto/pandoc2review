@@ -3,7 +3,7 @@ require 'fileutils'
 require 'open3'
 
 def pandoc(src, opts: nil, err: nil)
-  args = 'pandoc -t review.lua --lua-filter=filters.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
+  args = 'pandoc -t lib/review.lua --lua-filter=lib/filters.lua -f markdown-auto_identifiers-smart+east_asian_line_breaks'
   if opts
     args += ' ' + opts
   end

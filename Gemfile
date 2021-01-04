@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'simplecov'
-gem 'test-unit'
-gem 'unicode-eaw'
+# Specify your gem's dependencies in pandoc2review.gemspec
+gemspec
+
+gem "rake", "~> 12.0"
