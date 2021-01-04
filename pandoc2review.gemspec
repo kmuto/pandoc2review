@@ -1,12 +1,12 @@
 Gem::Specification.new do |spec|
   spec.name          = "pandoc2review"
-  # spec.version       = Pandoc2review::VERSION
-  spec.version       = "1.1.0"
-  spec.authors       = ["kmuto"]
+  spec.version       = "1.2.0"
+  spec.authors       = ["Kenshi Muto"]
   spec.email         = ["kmuto@kmuto.jp"]
+  spec.license       = "GPL-2.0"
 
-  spec.summary       = %q{Re:VIEW Filter/Writer for Pandoc.}
-  spec.description   = %q{Re:VIEW Filter/Writer for Pandoc.}
+  spec.summary       = %q{Pandoc2review is a converter from any document to Re:VIEW format (using Pandoc)}
+  spec.description   = %q{It provides Re:VIEW Writer/Filter for Pandoc, and Ruby script to make it easier to handle.}
   spec.homepage      = "https://github.com/kmuto/pandoc2review"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 

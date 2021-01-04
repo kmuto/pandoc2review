@@ -48,9 +48,14 @@ GNU General Public License Version 2
 ## Special Thanks
 - [@atusy](https://github.com/atusy)
 - [@niszet](https://github.com/niszet)
+- [@takahashim](https://github.com/takahashim)
 
 ## Changelog
-### 1.1
+### 1.2.0
+- Release gem file for RubyGems.
+- Refactoring for gem style.
+
+### 1.1.0
 - Improve block (Div) convertion, in particular of caption and texequation.
 - Add sample how you can integrate Markdown files to your Re:VIEW project folder.
 - Add blankline support.
@@ -58,7 +63,7 @@ GNU General Public License Version 2
 - Use `@<br>{}` for Linebreak instead of linefeed.
 - Refactoring.
 
-### 1.0
+### 1.0.0
 - Initial Release.
 
 ---
