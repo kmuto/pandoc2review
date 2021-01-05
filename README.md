@@ -1,5 +1,6 @@
 # pandoc2review
 
+[![Gem Version](https://badge.fury.io/rb/pandoc2review.svg)](https://badge.fury.io/rb/pandoc2review)
 [![Build Status](https://github.com/kmuto/pandoc2review/workflows/Pandoc/badge.svg)](https://github.com/kmuto/pandoc2review/actions)
 
 - [日本語での説明](#日本語での説明)
