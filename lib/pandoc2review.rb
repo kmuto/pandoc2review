@@ -50,7 +50,7 @@ class Pandoc2ReVIEW
     @hideraw = nil
     opts = OptionParser.new
     opts.banner = 'Usage: pandoc2review [option] file [file ...]'
-    opts.version = '1.2'
+    opts.version = '1.3'
 
     opts.on('--help', 'Prints this message and quit.') do
       puts opts.help
