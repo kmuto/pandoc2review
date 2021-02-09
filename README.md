@@ -57,6 +57,9 @@ GNU General Public License Version 2
 - [@takahashim](https://github.com/takahashim)
 
 ## Changelog
+### 1.3.0
+- Fix "attempt to index global 'first' (a nil value)" error in a docx file.
+
 ### 1.2.0
 - Release gem file for RubyGems.
 - Refactoring for gem style.

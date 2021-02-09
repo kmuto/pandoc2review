@@ -137,7 +137,7 @@ end
 local function noindent(para)
   first = para.content[1]
 
-  if ((first.tag == "RawInline") and
+  if (first and (first.tag == "RawInline") and
       (first.format == "tex") and
       (first.text:match("^\\noindent%s*"))) then
     para.content[1] = review_inline("//noindent\n")
