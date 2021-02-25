@@ -29,6 +29,10 @@ class Pandoc2ReVIEW
         end
       end
 
+      if @stripemptydev
+        args += ['-M', "stripemptydev:true"]
+      end
+
       if @heading
         args += ["--shift-heading-level-by=#{@heading}"]
       end
@@ -48,9 +52,10 @@ class Pandoc2ReVIEW
     @heading = nil
     @disableeaw = nil
     @hideraw = nil
+    @stripemptydev = nil
     opts = OptionParser.new
     opts.banner = 'Usage: pandoc2review [option] file [file ...]'
-    opts.version = '1.3'
+    opts.version = '1.4'
 
     opts.on('--help', 'Prints this message and quit.') do
       puts opts.help
@@ -64,6 +69,9 @@ class Pandoc2ReVIEW
     end
     opts.on('--hideraw', "Hide raw inline/block with no review format specified.") do
       @hideraw = true
+    end
+    opts.on('--strip-emptydev', "Strip <div> without any id or class") do
+      @stripemptydev = true
     end
 
     opts.parse!(ARGV)

@@ -102,6 +102,7 @@ local function caption_div(div)
   local caption = div.attributes.caption
 
   if ((#div.content == 1) and
+      (div.content[1].content) and
       (#div.content[1].content == 1) and
       (div.content[1].content[1].tag == "Math") and
       (div.identifier)) then

@@ -522,7 +522,11 @@ function Div(s, attr)
   local classes = attr_classes(attr)
 
   if next(classes) == nil then
-    return "//{\n" .. s .. "\n//}"
+    if metadata.stripemptydev then
+      return s
+    else
+      return "//{\n" .. s .. "\n//}"
+    end
   end
 
   if classes["review-internal"] then

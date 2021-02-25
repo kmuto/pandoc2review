@@ -1127,6 +1127,40 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
+  def test_latex_block
+    src = <<-EOB
+\\begin{table}
+  \\caption{テスト}
+  \\label{tbl:test}
+  \\begin{tabular}{|c||c|} \\hline
+      a & b \\hline
+  \\end{tabular}
+\\end{table}
+EOB
+
+    expected = <<-EOB
+//{
+//table[table1][テスト]{
+
+--------------
+@<dtp>{table align=center}a\t@<dtp>{table align=center}b
+//}
+//}
+EOB
+
+    assert_equal expected, pandoc(src, override_args: 'pandoc -t lua/review.lua --lua-filter=lua/filters.lua -f latex')
+
+    expected = <<-EOB
+//table[table1][テスト]{
+
+--------------
+@<dtp>{table align=center}a\t@<dtp>{table align=center}b
+//}
+EOB
+
+    assert_equal expected, pandoc(src, override_args: 'pandoc -t lua/review.lua --lua-filter=lua/filters.lua -f latex', opts: '-M stripemptydev:true')
+  end
+
   def test_table
     src = <<-EOB
   Right     Left     Center     Default
