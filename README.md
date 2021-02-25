@@ -57,6 +57,10 @@ GNU General Public License Version 2
 - [@takahashim](https://github.com/takahashim)
 
 ## Changelog
+### 1.4.0
+- Fix an error when empty div block is received.
+- Introduce '--strip-emptydev' to strip empty block `//{-//}`, produced by TeX file.
+
 ### 1.3.0
 - Fix "attempt to index global 'first' (a nil value)" error in a docx file.
 
