@@ -357,7 +357,7 @@ function Link(s, src, tit)
   if (src == s) then
     return format_inline("href", src)
   else
-    return format_inline("href", src .. "," .. s)
+    return format_inline("href", src .. "," .. s) .. Note(src)
   end
 end
 
