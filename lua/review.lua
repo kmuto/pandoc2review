@@ -357,6 +357,7 @@ function Link(s, src, tit)
   if (src == s) then
     return format_inline("href", src)
   else
+    -- TODO: consider srcs without prefix `https?:`
     return format_inline("href", src .. "," .. s) .. Note(src)
   end
 end
