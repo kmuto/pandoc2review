@@ -24,7 +24,7 @@ local note_num = 0
 local footnotes = {}
 
 -- internal
-local metadata = nil
+local metadata = {}
 local stringify = (require "pandoc.utils").stringify
 local inline_commands = {
   -- processed if given as classes of Span elements
@@ -598,7 +598,9 @@ end
 
 try_catch {
   try = function()
-    metadata = PANDOC_DOCUMENT.meta
+    if PANDOC_VERSION < '3.0' then
+      metadata = PANDOC_DOCUMENT.meta
+    end
   end,
   catch = function(error)
     log("Due to your pandoc version is too old, config.yml loader is disabled.\n")
