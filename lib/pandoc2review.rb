@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020-2021 Kenshi Muto
+# Copyright 2020-2023 Kenshi Muto
 require 'optparse'
 require 'unicode/eaw'
 require 'pathname'
@@ -55,7 +55,7 @@ class Pandoc2ReVIEW
     @stripemptydev = nil
     opts = OptionParser.new
     opts.banner = 'Usage: pandoc2review [option] file [file ...]'
-    opts.version = '1.4'
+    opts.version = '1.5'
 
     opts.on('--help', 'Prints this message and quit.') do
       puts opts.help
@@ -74,7 +74,13 @@ class Pandoc2ReVIEW
       @stripemptydev = true
     end
 
-    opts.parse!(ARGV)
+    begin
+      opts.parse!(ARGV)
+    rescue OptionParser::ParseError
+      puts opts.help
+      exit 1
+    end
+
     if ARGV.size != 1
       puts opts.help
       exit 0
