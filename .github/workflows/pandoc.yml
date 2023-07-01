@@ -5,14 +5,19 @@ jobs:
   Pandoc:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['2.7', '3.1']
+        pandoc: ['2.11.3', '3.1.4']
     steps:
     - uses: actions/checkout@master
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
+        ruby-version: ${{ matrix.ruby }}
     - uses: r-lib/actions/setup-pandoc@v1
       with:
-        pandoc-version: '2.11.3'
+        pandoc-version: ${{ matrix.pandoc }}
     - run: |
         gem install bundler --no-document
         bundle install --retry 3
