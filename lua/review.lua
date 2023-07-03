@@ -477,6 +477,16 @@ function CaptionedImage(s, src, tit, attr)
   )
 end
 
+function Image(s, src, tit, attr)
+  -- Re:VIEW @<icon> ignores caption and title
+  if attr.is_figure then
+    return CaptionedImage(src, s, tit, attr)
+  end
+  local id = string.gsub(src, "%.%w+$", "")
+  id = string.gsub(id, "^images/", "")
+  return format_inline("icon", id)
+end
+
 function Note(s)
   note_num = note_num + 1
   table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. s .. "]")
