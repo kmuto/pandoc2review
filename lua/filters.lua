@@ -1,3 +1,5 @@
+-- Copyright 2020-2023 atusy and Kenshi Muto
+
 local function review_inline(x)
     return pandoc.RawInline("review", x)
 end

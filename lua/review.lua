@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- Re:VIEW Writer for Pandoc
--- Copyright 2020 Kenshi Muto
+-- Copyright 2020-2023 atusy and Kenshi Muto
 
 -- config
 local config = {
