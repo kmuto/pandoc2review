@@ -47,7 +47,7 @@ pandoc2review file > file.re
 
 ## Copyright
 
-Copyright 2020-2021 Kenshi Muto
+Copyright 2020-2023 Kenshi Muto
 
 GNU General Public License Version 2
 
@@ -57,6 +57,9 @@ GNU General Public License Version 2
 - [@takahashim](https://github.com/takahashim)
 
 ## Changelog
+### 1.5.0
+- Support Pandoc 3.
+
 ### 1.4.0
 - Fix an error when empty div block is received.
 - Introduce '--strip-emptydev' to strip empty block `//{-//}`, produced by TeX file.
