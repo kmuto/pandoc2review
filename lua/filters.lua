@@ -6,7 +6,11 @@ local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
 local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
 local function markdown(text)
-  return(pandoc.read(text, "markdown").blocks[1].content)
+  return pandoc.read(
+    text,
+    "markdown-auto_identifiers-smart+east_asian_line_breaks",
+    PANDOC_READER_OPTIONS
+  ).blocks[1].content
 end
 
 local function support_blankline(constructor)
@@ -150,6 +154,34 @@ local function noindent(para)
   return para
 end
 
+local function figure(fig)
+  -- Pandoc 3.x adds pandoc.Figure
+  if #fig.content > 1 or #fig.content[1].content > 1 then
+    error("NotImplemented")
+  end
+
+  local base = fig.content[1].content[1]
+
+  local attr = {}
+  for k, v in pairs(base.attributes) do
+    attr[k] = v
+  end
+  local classes = {}
+  for _, v in pairs(base.classes) do
+    table.insert(classes, "." .. v)
+  end
+  attr.classes = table.concat(classes, " ")
+  attr.identifier = base.attr.identifier
+  attr.is_figure = "true"
+
+  return pandoc.Image(
+    base.title,
+    base.src,
+    pandoc.utils.stringify(fig.caption),
+    attr
+  )
+end
+
 return {
   {Emph = support_strong("Strong")},
   {Strong = support_strong("Emph")},
@@ -160,5 +192,6 @@ return {
   {BulletList = nestablelist},
   {OrderedList = nestablelist},
   {DefinitionList = nestablelist},
-  {Div = caption_div}
+  {Div = caption_div},
+  {Figure = figure},
 }
