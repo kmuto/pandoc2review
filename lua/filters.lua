@@ -6,7 +6,11 @@ local beginchild = {pandoc.Plain(review_inline("//beginchild"))}
 local endchild = {pandoc.Plain(review_inline("//endchild"))}
 
 local function markdown(text)
-  return(pandoc.read(text, "markdown").blocks[1].content)
+  return pandoc.read(
+    text,
+    "markdown-auto_identifiers-smart+east_asian_line_breaks",
+    PANDOC_READER_OPTIONS
+  ).blocks[1].content
 end
 
 local function support_blankline(constructor)
