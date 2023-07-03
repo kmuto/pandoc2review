@@ -596,22 +596,36 @@ function RawBlock(format, text)
   end
 end
 
-try_catch {
-  try = function()
-    metadata = PANDOC_DOCUMENT.meta
-  end,
-  catch = function(error)
-    log("Due to your pandoc version is too old, config.yml loader is disabled.\n")
-  end
-}
+local function configure()
+  try_catch {
+    try = function()
+      metadata = PANDOC_DOCUMENT.meta
+    end,
+    catch = function(error)
+      log("Due to your pandoc version is too old, config.yml loader is disabled.\n")
+    end
+  }
 
-if (metadata) then
-  -- Load config from YAML
-  for k,v in pairs(config) do
-    if metadata[k] ~= nil then
-      config[k] = stringify(metadata[k])
+  if (metadata) then
+    -- Load config from YAML
+    for k,v in pairs(config) do
+      if metadata[k] ~= nil then
+        config[k] = stringify(metadata[k])
+      end
     end
   end
+end
+
+if PANDOC_VERSION >= "3.0.0" then
+  -- NOTE: A wrapper to support Pandoc >= 3.0 https://pandoc.org/custom-writers.html#changes-in-pandoc-3.0
+  function Writer (doc, opts)
+    PANDOC_DOCUMENT = doc
+    PANDOC_WRITER_OPTIONS = opts
+    configure()
+    return pandoc.write_classic(doc, opts)
+  end
+else
+  configure()
 end
 
 local meta = {}
