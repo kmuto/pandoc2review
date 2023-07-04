@@ -189,10 +189,7 @@ local function attr_scale(attr, key) -- a helper for CaptionedImage
 end
 
 function Header(level, s, attr)
-  local headmark = ""
-  for i = 1, level do
-    headmark = headmark .. "="
-  end
+  local headmark = string.rep("=", level)
 
   local classes = attr_classes(attr)
 
