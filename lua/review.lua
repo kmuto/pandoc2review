@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- Re:VIEW Writer for Pandoc
--- Copyright 2020-2023 atusy and Kenshi Muto
+-- Copyright 2020 Kenshi Muto
 
 -- config
 local config = {
@@ -514,7 +514,7 @@ function Div(s, attr)
   local blankline = attr_val(attr, "blankline")
   if blankline ~= "" then
     local buffer = {}
-    for i = 1, tonumber(blankline) do
+    for _ = 1, tonumber(blankline) do
       table.insert(buffer, "//blankline")
     end
     return table.concat(buffer, "\n")
@@ -609,7 +609,7 @@ local function configure()
 
   if (metadata) then
     -- Load config from YAML
-    for k,v in pairs(config) do
+    for k, _ in pairs(config) do
       if metadata[k] ~= nil then
         config[k] = stringify(metadata[k])
       end
