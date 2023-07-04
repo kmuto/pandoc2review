@@ -142,7 +142,7 @@ local function caption_div(div)
 end
 
 local function noindent(para)
-  first = para.content[1]
+  local first = para.content[1]
 
   if (first and (first.tag == "RawInline") and
       (first.format == "tex") and

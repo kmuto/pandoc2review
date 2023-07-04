@@ -180,7 +180,7 @@ local function attr_classes(attr)
 end
 
 local function attr_scale(attr, key) -- a helper for CaptionedImage
-  scale = attr_val(attr, key)
+  local scale, count = attr_val(attr, key), 0
   if (scale == "") or (key == "scale") then
     return scale
   end
@@ -288,7 +288,7 @@ function CodeBlock(s, attr)
   end
   command = command or "list"
 
-  is_list = command == "list"
+  local is_list = command == "list"
 
 
   local num = (is_list == false) and "" or (
@@ -411,7 +411,7 @@ function Table(caption, aligns, widths, headers, rows)
   end
   local tmp = {}
   for i, h in pairs(headers) do
-    align = html_align(aligns[i])
+    local align = html_align(aligns[i])
     if (config.use_table_align == "true") and (align ~= "") then
       h = format_inline("dtp", "table align=" .. align) .. h
     end
@@ -422,7 +422,7 @@ function Table(caption, aligns, widths, headers, rows)
   for _, row in pairs(rows) do
     tmp = {}
       for i, c in pairs(row) do
-      align = html_align(aligns[i])
+      local align = html_align(aligns[i])
       if (config.use_table_align == "true") and (align ~= "") then
         c = format_inline("dtp", "table align=" .. align) .. c
       end
