@@ -586,7 +586,7 @@ function RawInline(format, text)
   if (format == "tex") then
     return format_inline("embed", "|latex|" .. text)
   else
-    return format_inline("embed", "|" .. format .. "|", text)
+    return format_inline("embed", "|" .. format .. "|" .. text)
   end
 end
 

@@ -89,6 +89,10 @@ EOB
     assert_equal '@<tt>{a\*}', pandoc(src).chomp
     src = '`<$>`{.haskell}'
     assert_equal '@<tt>{<$>}', pandoc(src).chomp # XXX: ignore attribute
+    src = '`content`{=tex}'
+    assert_equal '@<embed>{|latex|content}', pandoc(src).chomp
+    src = '`content`{=latex}'
+    assert_equal '@<embed>{|latex|content}', pandoc(src).chomp
     src = '~~a~~'
     assert_equal '@<del>{a}', pandoc(src).chomp
     src = '[Small]{.smallcaps}'
