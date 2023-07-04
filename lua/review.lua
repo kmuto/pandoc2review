@@ -161,13 +161,7 @@ function Para(s)
 end
 
 local function attr_val(attr, key)
-  local attr_table = {}
-  for k, v in pairs(attr) do
-    if (k == key and v and v ~= "") then
-      return v
-    end
-  end
-  return ""
+  return attr[key] or ""
 end
 
 local function attr_classes(attr)
