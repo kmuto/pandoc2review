@@ -47,7 +47,7 @@ pandoc2review file > file.re
 
 ## Copyright
 
-Copyright 2020-2023 Kenshi Muto
+Copyright 2020-2023 Kenshi Muto and atusy
 
 GNU General Public License Version 2
 
@@ -57,6 +57,10 @@ GNU General Public License Version 2
 - [@takahashim](https://github.com/takahashim)
 
 ## Changelog
+### 1.6.0
+- Fix inline raw.
+- Refactoring.
+
 ### 1.5.0
 - Support Pandoc 3.
 
