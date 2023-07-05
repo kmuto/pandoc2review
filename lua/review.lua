@@ -161,13 +161,7 @@ function Para(s)
 end
 
 local function attr_val(attr, key)
-  local attr_table = {}
-  for k, v in pairs(attr) do
-    if (k == key and v and v ~= "") then
-      return v
-    end
-  end
-  return ""
+  return attr[key] or ""
 end
 
 local function attr_classes(attr)
@@ -180,7 +174,7 @@ local function attr_classes(attr)
 end
 
 local function attr_scale(attr, key) -- a helper for CaptionedImage
-  scale = attr_val(attr, key)
+  local scale, count = attr_val(attr, key), 0
   if (scale == "") or (key == "scale") then
     return scale
   end
@@ -195,10 +189,7 @@ local function attr_scale(attr, key) -- a helper for CaptionedImage
 end
 
 function Header(level, s, attr)
-  local headmark = ""
-  for i = 1, level do
-    headmark = headmark .. "="
-  end
+  local headmark = string.rep("=", level)
 
   local classes = attr_classes(attr)
 
@@ -288,7 +279,7 @@ function CodeBlock(s, attr)
   end
   command = command or "list"
 
-  is_list = command == "list"
+  local is_list = command == "list"
 
 
   local num = (is_list == false) and "" or (
@@ -411,7 +402,7 @@ function Table(caption, aligns, widths, headers, rows)
   end
   local tmp = {}
   for i, h in pairs(headers) do
-    align = html_align(aligns[i])
+    local align = html_align(aligns[i])
     if (config.use_table_align == "true") and (align ~= "") then
       h = format_inline("dtp", "table align=" .. align) .. h
     end
@@ -422,7 +413,7 @@ function Table(caption, aligns, widths, headers, rows)
   for _, row in pairs(rows) do
     tmp = {}
       for i, c in pairs(row) do
-      align = html_align(aligns[i])
+      local align = html_align(aligns[i])
       if (config.use_table_align == "true") and (align ~= "") then
         c = format_inline("dtp", "table align=" .. align) .. c
       end
@@ -523,7 +514,7 @@ function Div(s, attr)
   local blankline = attr_val(attr, "blankline")
   if blankline ~= "" then
     local buffer = {}
-    for i = 1, tonumber(blankline) do
+    for _ = 1, tonumber(blankline) do
       table.insert(buffer, "//blankline")
     end
     return table.concat(buffer, "\n")
@@ -586,7 +577,7 @@ function RawInline(format, text)
   if (format == "tex") then
     return format_inline("embed", "|latex|" .. text)
   else
-    return format_inline("embed", "|" .. format .. "|", text)
+    return format_inline("embed", "|" .. format .. "|" .. text)
   end
 end
 
@@ -618,7 +609,7 @@ local function configure()
 
   if (metadata) then
     -- Load config from YAML
-    for k,v in pairs(config) do
+    for k, _ in pairs(config) do
       if metadata[k] ~= nil then
         config[k] = stringify(metadata[k])
       end

@@ -29,7 +29,7 @@ local function support_blankline(constructor)
     local n_break = 0
     local content = blocks[i].content
 
-    for j, elem in ipairs(x.content) do
+    for _, elem in ipairs(x.content) do
       if elem.tag == "LineBreak" then
         -- Count the repeated number of LineBreak
         n_break = n_break + 1
@@ -142,7 +142,7 @@ local function caption_div(div)
 end
 
 local function noindent(para)
-  first = para.content[1]
+  local first = para.content[1]
 
   if (first and (first.tag == "RawInline") and
       (first.format == "tex") and
