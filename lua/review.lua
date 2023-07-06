@@ -441,8 +441,7 @@ function Image(s, src, tit, attr)
   if attr.is_figure then
     return CaptionedImage(src, s, tit, attr)
   end
-  local id = string.gsub(src, "%.%w+$", "")
-  id = string.gsub(id, "^images/", "")
+  local id = src:gsub("%.%w+$", ""):gsub("^images/", "")
   return format_inline("icon", id)
 end
 
