@@ -425,13 +425,8 @@ function CaptionedImage(s, src, tit, attr)
     scale = "[scale=" .. scale .. "]"
   end
 
-  local command = "//image"
-  local caption = ""
-  if tit == "" then
-    command = "//indepimage"
-  else
-    caption = "[" .. tit .. "]"
-  end
+  local command = tit == "" and "//indepimage" or "//image"
+  local caption = tit == "" and "" or ("[" .. tit .. "]")
 
   return (command .. path .. caption .. scale .. "{" .. comment .. "\n//}")
 end
