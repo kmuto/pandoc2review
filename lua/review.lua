@@ -452,12 +452,7 @@ function Cite(s, cs)
 end
 
 function Quoted(quotetype, s)
-  if quotetype == "SingleQuote" then
-    return SingleQuoted(s)
-  end
-  if quotetype == "DoubleQuote" then
-    return DoubleQuoted(s)
-  end
+  return _G[quotetype](s)
 end
 
 function SingleQuoted(s)
