@@ -188,30 +188,25 @@ local function attr_scale(attr, key) -- a helper for CaptionedImage
   return tonumber(scale) / 100
 end
 
+local function class_header(classes)
+  -- Re:VIEW's behavior
+  for _, cls in pairs({ "column", "nonum", "nodisp", "notoc" }) do
+    if classes[cls] then
+      return string.format("[%s]", cls)
+    end
+  end
+
+  -- Pandoc's behavior
+  if classes.unnumbered then
+    return classes.unlisted and "[notoc]" or "[nonum]"
+  end
+
+  -- None
+  return ""
+end
+
 function Header(level, s, attr)
-  local headmark = string.rep("=", level)
-
-  local classes = attr_classes(attr)
-
-  headmark = headmark
-    .. (
-            -- Re:VIEW's behavior
-classes["column"] and "[column]"
-      or (
-        classes["nonum"] and "[nonum]"
-        or (
-          classes["nodisp"] and "[nodisp]"
-          or (
-            classes["notoc"] and "[notoc]"
-            or (
-                            -- Pandoc's behavior
-classes["unnumbered"] and (classes["unlisted"] and "[notoc]" or "[nonum]") -- None
-              or ""
-            )
-          )
-        )
-      )
-    )
+  local headmark = string.rep("=", level) .. class_header(attr_classes(attr))
 
   if (config.use_header_id == "true") and attr.id ~= "" and attr.id ~= s then
     headmark = headmark .. "{" .. attr.id .. "}"
