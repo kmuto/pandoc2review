@@ -558,18 +558,6 @@ local function configure()
   end
 end
 
-if PANDOC_VERSION >= "3.0.0" then
-  -- NOTE: A wrapper to support Pandoc >= 3.0 https://pandoc.org/custom-writers.html#changes-in-pandoc-3.0
-  function Writer(doc, opts)
-    PANDOC_DOCUMENT = doc
-    PANDOC_WRITER_OPTIONS = opts
-    configure()
-    return pandoc.write_classic(doc, opts)
-  end
-else
-  configure()
-end
-
 local meta = {}
 meta.__index = function(_, key)
   log(string.format("WARNING: Undefined function '%s'\n", key))
@@ -579,3 +567,193 @@ meta.__index = function(_, key)
 end
 
 setmetatable(_G, meta)
+
+if PANDOC_VERSION < "3.0.0" then
+  configure()
+  return
+end
+
+Blocks = setmetatable({}, {
+  __index = function(_, key)
+    error("NotImplementedError: Blocks.%" .. tostring(key))
+  end,
+})
+
+Inlines = setmetatable({}, {
+  __index = function(_, key)
+    error("NotImplementedError: Inlines.%" .. tostring(key))
+  end,
+})
+
+local tidy_attr = function(el)
+  local ret = {}
+  for k, v in pairs(el.attr.attributes) do
+    ret[k] = v
+  end
+  ret.id = el.identifier or ""
+  ret.class = el.classes and table.concat(el.classes, " ")
+  return ret
+end
+
+local concat = pandoc.layout.concat
+
+local function render(...)
+  local x = pandoc.layout.render(...):gsub("\n+$", "")
+  return x
+end
+
+local function inlines(els)
+  local buff = {}
+  for _, el in ipairs(els) do
+    table.insert(buff, Inlines[el.tag](el))
+  end
+  return concat(buff)
+end
+
+local function blocks(els, sep)
+  local buff = {}
+  for _, el in ipairs(els) do
+    table.insert(buff, Blocks[el.tag](el))
+  end
+  return concat(buff, sep)
+end
+
+Inlines.Str = function(el)
+  return Str(el.text)
+end
+
+for _, v in pairs({ "Space", "LineBreak", "SoftBreak" }) do
+  Inlines[v] = _G[v]
+end
+
+Blocks.HorizontalRule = function(_)
+  return HorizontalRule() .. "\n"
+end
+
+Blocks.Plain = function(el)
+  return inlines(el.content) .. "\n"
+end
+
+Blocks.Para = function(el)
+  if #el.content == 1 and el.content[1].tag == "Image" then
+    local img = el.content[1]
+    img.attributes.is_figure = "true"
+    return Inlines.Image(img) .. "\n"
+  end
+  return inlines(el.content) .. "\n"
+end
+
+Blocks.Header = function(el)
+  return Header(el.level, render(inlines(el.content)), tidy_attr(el)) .. "\n"
+end
+
+local function render_blocks(blks, sep)
+  local ret = {}
+  for _, v in pairs(blks) do
+    table.insert(ret, render(blocks(v, sep or "\n")))
+  end
+  return ret
+end
+
+Blocks.BulletList = function(el)
+  return BulletList(render_blocks(el.content)) .. "\n"
+end
+
+Blocks.OrderedList = function(el)
+  return OrderedList(render_blocks(el.content), el.start) .. "\n"
+end
+
+Blocks.DefinitionList = function(el)
+  local items = {}
+  for _, v in pairs(el.content) do
+    local term = render(inlines(v[1]))
+    table.insert(items, { [term] = render_blocks(v[2]) })
+  end
+  return DefinitionList(items) .. "\n"
+end
+
+Blocks.BlockQuote = function(el)
+  return BlockQuote(render(blocks(el.content, "\n"))) .. "\n"
+end
+
+Blocks.CodeBlock = function(el)
+  return CodeBlock(el.text, tidy_attr(el)) .. "\n"
+end
+
+Blocks.LineBlock = function(el)
+  local lines = {}
+  for _, v in pairs(el.content) do
+    table.insert(lines, render(inlines(v)))
+  end
+  return LineBlock(lines) .. "\n"
+end
+
+Inlines.Link = function(el)
+  return Link(render(inlines(el.content)), el.target, el.title)
+end
+
+Inlines.Code = function(el)
+  return Code(el.text, tidy_attr(el))
+end
+
+for _, k in pairs({ "Emph", "Strong", "Strikeout", "Underline", "Subscript", "Superscript", "SmallCaps" }) do
+  Inlines[k] = function(el)
+    return _G[k](render(inlines(el.content)))
+  end
+end
+
+Inlines.Math = function(el)
+  return _G[el.mathtype](el.text)
+end
+
+Blocks.Table = function(el)
+  local tbl = pandoc.utils.to_simple_table(el)
+  local headers = render_blocks(tbl.headers)
+  local rows = {}
+  for _, row in pairs(tbl.rows) do
+    table.insert(rows, render_blocks(row, ""))
+  end
+  return Table(render(inlines(tbl.caption)), tbl.aligns, tbl.widths, headers, rows) .. "\n"
+end
+
+Inlines.Image = function(el)
+  return Image(render(inlines(el.caption)), el.src, el.title, tidy_attr(el))
+end
+
+Inlines.Note = function(el)
+  return Note(render(blocks(el.content, "\n")))
+end
+
+Inlines.Cite = function(el)
+  return Cite(render(inlines(el.content)))
+end
+
+Inlines.Quoted = function(el)
+  return Quoted(el.quotetype, render(inlines(el.content)))
+end
+
+Blocks.Div = function(el)
+  return Div(render(blocks(el.content, "\n")), tidy_attr(el)) .. "\n"
+end
+
+Inlines.Span = function(el)
+  return Span(render(inlines(el.content)), tidy_attr(el))
+end
+
+Inlines.RawInline = function(el)
+  return RawInline(el.format, el.text)
+end
+
+Blocks.RawBlock = function(el)
+  return RawBlock(el.format, el.text) .. "\n"
+end
+
+function Writer(doc, opts)
+  PANDOC_DOCUMENT = doc
+  PANDOC_WRITER_OPTIONS = opts
+  configure()
+
+  -- body should keep trailing new lines but remove one if there are footnotes for the backward-compatibility
+  local body = pandoc.layout.render(pandoc.layout.concat({ blocks(doc.blocks, "\n") }))
+  return Doc(#footnotes == 0 and body or body:gsub("\n$", ""))
+end
