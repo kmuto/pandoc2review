@@ -103,15 +103,7 @@ local function format_inline(fmt, s)
 end
 
 local function html_align(align)
-  if align == "AlignLeft" then
-    return ""
-  elseif align == "AlignRight" then
-    return "right"
-  elseif align == "AlignCenter" then
-    return "center"
-  else
-    return ""
-  end
+  return ({ AlignRight = "right", AlignCenter = "center" })[align] or ""
 end
 
 function Blocksep()
