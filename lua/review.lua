@@ -83,21 +83,19 @@ local function log(s)
 end
 
 local function surround_inline(s)
-  if string.match(s, "{") or string.match(s, "}") then
-    if string.match(s, "%$") then -- use % for regexp escape
-      if string.match(s, "|") then
-        -- give up. escape } by \}
-        return "{" .. string.gsub(s, "}", "\\}") .. "}"
-      else
-        -- surround by ||
-        return "|" .. s .. "|"
-      end
-    else
-      -- surround by $$
-      return "$" .. s .. "$"
-    end
+  if not s:match("[{}]") then
+    return "{" .. s .. "}"
   end
-  return "{" .. s .. "}"
+  if not s:match("%$") then
+    return "$" .. s .. "$"
+  end
+
+  -- use % for regexp escape
+  if s:match("|") then
+    -- give up. escape } by \}
+    return "{" .. s:gsub("}", "\\}") .. "}"
+  end
+  return "|" .. s .. "|"
 end
 
 local function format_inline(fmt, s)
