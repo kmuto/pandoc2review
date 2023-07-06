@@ -118,16 +118,11 @@ function Blocksep()
   return "\n\n"
 end
 
-function Doc(body, metadata, variables)
-  local buffer = {}
-  local function add(s)
-    table.insert(buffer, s)
+function Doc(body, meta, variables)
+  if #footnotes == 0 then
+    return body
   end
-  add(body)
-  if #footnotes > 0 then
-    add("\n" .. table.concat(footnotes, "\n"))
-  end
-  return table.concat(buffer, "\n")
+  return table.concat({ body, "", table.concat(footnotes, "\n") }, "\n")
 end
 
 function Str(s)
