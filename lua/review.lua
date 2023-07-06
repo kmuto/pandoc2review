@@ -138,11 +138,7 @@ function LineBreak()
 end
 
 function SoftBreak(s)
-  if metadata.softbreak then
-    return " "
-  else
-    return "<P2RBR/>"
-  end
+  return metadata.softbreak and " " or "<P2RBR/>"
 end
 
 function Plain(s)
