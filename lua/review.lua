@@ -468,13 +468,9 @@ function SmallCaps(s)
 end
 
 function Div(s, attr)
-  local blankline = attr_val(attr, "blankline")
-  if blankline ~= "" then
-    local buffer = {}
-    for _ = 1, tonumber(blankline) do
-      table.insert(buffer, "//blankline")
-    end
-    return table.concat(buffer, "\n")
+  local blankline = tonumber(attr.blankline)
+  if blankline then
+    return string.rep("//blankline\n", blankline):gsub("\n$", "")
   end
 
   local classes = attr_classes(attr)
