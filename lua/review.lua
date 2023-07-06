@@ -205,11 +205,7 @@ function Header(level, s, attr)
 end
 
 function HorizontalRule()
-  if config.use_hr == "true" then
-    return "//hr"
-  else
-    return ""
-  end
+  return config.use_hr == "true" and "//hr" or ""
 end
 
 local function lint_list(s)
