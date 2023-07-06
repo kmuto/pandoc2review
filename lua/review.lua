@@ -558,15 +558,14 @@ local function configure()
   end
 end
 
-local meta = {}
-meta.__index = function(_, key)
-  log(string.format("WARNING: Undefined function '%s'\n", key))
-  return function()
-    return ""
-  end
-end
-
-setmetatable(_G, meta)
+setmetatable(_G, {
+  __index = function(_, key)
+    log(string.format("WARNING: Undefined function '%s'\n", key))
+    return function()
+      return ""
+    end
+  end,
+})
 
 if PANDOC_VERSION < "3.0.0" then
   configure()
