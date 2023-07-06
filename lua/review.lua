@@ -257,26 +257,23 @@ end
 function CodeBlock(s, attr)
   local classes = attr_classes(attr)
 
-  local command = nil
+  local command = "list" -- default
   for k, v in pairs({ cmd = "cmd", source = "source", quote = "source" }) do
     if classes[k] then
       command = v
       break
     end
   end
-  command = command or "list"
 
   local is_list = command == "list"
 
-  local num = (is_list == false) and ""
-    or ((classes["numberLines"] or classes["number-lines"] or classes["num"]) and "num" or "")
+  local num = (is_list and (classes["numberLines"] or classes["number-lines"] or classes["num"])) and "num" or ""
 
   local firstlinenum = ""
   if is_list and (num == "num") then
     for _, key in ipairs({ "startFrom", "start-from", "firstlinenum" }) do
-      firstlinenum = attr_val(attr, key)
-      if firstlinenum ~= "" then
-        firstlinenum = "//firstlinenum[" .. firstlinenum .. "]\n"
+      if attr[key] then
+        firstlinenum = "//firstlinenum[" .. attr[key] .. "]\n"
         break
       end
     end
