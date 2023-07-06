@@ -752,6 +752,13 @@ function Writer(doc, opts)
   PANDOC_WRITER_OPTIONS = opts
   configure()
 
+  if metadata.classicwriter then
+    if pandoc.write_classic then
+      return pandoc.write_classic(doc, opts)
+    end
+    log("WARNING: pandoc.write_classic is defunct. Using modern writer")
+  end
+
   -- body should keep trailing new lines but remove one if there are footnotes for the backward-compatibility
   local body = pandoc.layout.render(pandoc.layout.concat({ blocks(doc.blocks, "\n") }))
   return Doc(#footnotes == 0 and body or body:gsub("\n$", ""))

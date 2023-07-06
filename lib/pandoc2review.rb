@@ -33,6 +33,10 @@ class Pandoc2ReVIEW
         args += ['-M', "stripemptydev:true"]
       end
 
+      if @classicwriter
+        args += ['-M', "classicwriter:true"]
+      end
+
       if @heading
         args += ["--shift-heading-level-by=#{@heading}"]
       end
@@ -53,6 +57,7 @@ class Pandoc2ReVIEW
     @disableeaw = nil
     @hideraw = nil
     @stripemptydev = nil
+    @classicwriter = nil
     opts = OptionParser.new
     opts.banner = 'Usage: pandoc2review [option] file [file ...]'
     opts.version = '1.6'
@@ -72,6 +77,9 @@ class Pandoc2ReVIEW
     end
     opts.on('--strip-emptydev', "Strip <div> without any id or class") do
       @stripemptydev = true
+    end
+    opts.on('--classic-writer', "Prefer classic custom writer on Pandoc 3.x to be compatible with Pandoc 2.x") do
+      @classicwriter = true
     end
 
     begin
