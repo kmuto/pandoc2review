@@ -425,9 +425,6 @@ end
 
 function Image(s, src, tit, attr)
   -- Re:VIEW @<icon> ignores caption and title
-  if attr.is_figure then
-    return CaptionedImage(src, s, tit, attr)
-  end
   local id = src:gsub("%.%w+$", ""):gsub("^images/", "")
   return format_inline("icon", id)
 end
@@ -636,8 +633,7 @@ end
 Blocks.Para = function(el)
   if #el.content == 1 and el.content[1].tag == "Image" then
     local img = el.content[1]
-    img.attributes.is_figure = "true"
-    return Inlines.Image(img) .. "\n"
+    return CaptionedImage(img.src, img.title, render(inlines(img.caption)), tidy_attr(img)) .. "\n"
   end
   return inlines(el.content) .. "\n"
 end
@@ -747,6 +743,17 @@ Blocks.RawBlock = function(el)
   return RawBlock(el.format, el.text) .. "\n"
 end
 
+Blocks.Figure = function(el)
+  if #el.content > 1 or #el.content[1].content > 1 or el.content[1].content[1].tag ~= "Image" then
+    error("NotImplementedError: current implementation assumes Figure contains only a single image.")
+    -- because Pandoc 3.1.4 does not support Pandoc's markdown cotaining Figure with multiple images...
+  end
+
+  local img = el.content[1].content[1]
+
+  return CaptionedImage(img.src, img.title, render(inlines(img.caption)), tidy_attr(img)) .. "\n"
+end
+
 function Writer(doc, opts)
   PANDOC_DOCUMENT = doc
   PANDOC_WRITER_OPTIONS = opts
@@ -754,7 +761,14 @@ function Writer(doc, opts)
 
   if metadata.classicwriter then
     if pandoc.write_classic then
-      return pandoc.write_classic(doc, opts)
+      return pandoc.write_classic(
+        doc:walk({
+          Figure = function(el)
+            return pandoc.RawBlock("review", render(Blocks.Figure(el)))
+          end,
+        }),
+        opts
+      )
     end
     log("WARNING: pandoc.write_classic is defunct. Using modern writer")
   end
