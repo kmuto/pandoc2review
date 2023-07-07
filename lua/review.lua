@@ -25,7 +25,7 @@ local footnotes = {}
 
 -- internal
 local metadata = nil
-local stringify = (require "pandoc.utils").stringify
+local stringify = (require("pandoc.utils")).stringify
 local inline_commands = {
   -- processed if given as classes of Span elements
   -- true if syntax is `@<command>{string}`
@@ -48,7 +48,7 @@ local inline_commands = {
   title = true,
   chapref = true,
   list = true,
-  img =  true,
+  img = true,
   table = true,
   eq = true,
   hd = true,
@@ -83,9 +83,9 @@ local function log(s)
 end
 
 local function surround_inline(s)
-  if (string.match(s, "{") or string.match(s, "}")) then
-    if (string.match(s, "%$")) then -- use % for regexp escape
-      if (string.match(s, "|")) then
+  if string.match(s, "{") or string.match(s, "}") then
+    if string.match(s, "%$") then -- use % for regexp escape
+      if string.match(s, "|") then
         -- give up. escape } by \}
         return "{" .. string.gsub(s, "}", "\\}") .. "}"
       else
@@ -94,7 +94,7 @@ local function surround_inline(s)
       end
     else
       -- surround by $$
-        return "$" .. s .. "$"
+      return "$" .. s .. "$"
     end
   end
   return "{" .. s .. "}"
@@ -126,7 +126,7 @@ function Doc(body, metadata, variables)
     table.insert(buffer, s)
   end
   add(body)
-  if (#footnotes > 0) then
+  if #footnotes > 0 then
     add("\n" .. table.concat(footnotes, "\n"))
   end
   return table.concat(buffer, "\n")
@@ -145,7 +145,7 @@ function LineBreak()
 end
 
 function SoftBreak(s)
-  if (metadata.softbreak) then
+  if metadata.softbreak then
     return " "
   else
     return "<P2RBR/>"
@@ -188,25 +188,27 @@ local function attr_scale(attr, key) -- a helper for CaptionedImage
   return tonumber(scale) / 100
 end
 
+local function class_header(classes)
+  -- Re:VIEW's behavior
+  for _, cls in pairs({ "column", "nonum", "nodisp", "notoc" }) do
+    if classes[cls] then
+      return string.format("[%s]", cls)
+    end
+  end
+
+  -- Pandoc's behavior
+  if classes.unnumbered then
+    return classes.unlisted and "[notoc]" or "[nonum]"
+  end
+
+  -- None
+  return ""
+end
+
 function Header(level, s, attr)
-  local headmark = string.rep("=", level)
+  local headmark = string.rep("=", level) .. class_header(attr_classes(attr))
 
-  local classes = attr_classes(attr)
-
-  headmark = headmark .. (
-    -- Re:VIEW's behavior
-    classes["column"] and "[column]" or (
-    classes["nonum"] and "[nonum]" or (
-    classes["nodisp"] and "[nodisp]" or (
-    classes["notoc"] and "[notoc]" or (
-    -- Pandoc's behavior
-    classes["unnumbered"] and (
-      classes["unlisted"] and "[notoc]" or "[nonum]") or (
-    -- None
-    "")))))
-  )
-
-  if ((config.use_header_id == "true") and attr.id ~= "" and attr.id ~= s) then
+  if (config.use_header_id == "true") and attr.id ~= "" and attr.id ~= s then
     headmark = headmark .. "{" .. attr.id .. "}"
   end
 
@@ -214,7 +216,7 @@ function Header(level, s, attr)
 end
 
 function HorizontalRule()
-  if (config.use_hr == "true") then
+  if config.use_hr == "true" then
     return "//hr"
   else
     return ""
@@ -222,9 +224,9 @@ function HorizontalRule()
 end
 
 local function lint_list(s)
-  return s:gsub("\n+(//beginchild)\n+", '\n\n%1\n\n'
-         ):gsub("\n+(//endchild)\n+", '\n\n%1\n\n'
-         ):gsub("\n+(//endchild)\n*$", "\n\n%1")
+  return s:gsub("\n+(//beginchild)\n+", "\n\n%1\n\n")
+    :gsub("\n+(//endchild)\n+", "\n\n%1\n\n")
+    :gsub("\n+(//endchild)\n*$", "\n\n%1")
 end
 
 function BulletList(items)
@@ -271,7 +273,7 @@ function CodeBlock(s, attr)
   local classes = attr_classes(attr)
 
   local command = nil
-  for k,v in pairs({cmd = "cmd", source = "source", quote = "source"}) do
+  for k, v in pairs({ cmd = "cmd", source = "source", quote = "source" }) do
     if classes[k] then
       command = v
       break
@@ -281,15 +283,12 @@ function CodeBlock(s, attr)
 
   local is_list = command == "list"
 
-
-  local num = (is_list == false) and "" or (
-      (classes["numberLines"] or classes["number-lines"] or classes["num"]) and
-        "num" or ""
-    )
+  local num = (is_list == false) and ""
+    or ((classes["numberLines"] or classes["number-lines"] or classes["num"]) and "num" or "")
 
   local firstlinenum = ""
   if is_list and (num == "num") then
-    for _, key in ipairs({"startFrom", "start-from", "firstlinenum"}) do
+    for _, key in ipairs({ "startFrom", "start-from", "firstlinenum" }) do
       firstlinenum = attr_val(attr, key)
       if firstlinenum ~= "" then
         firstlinenum = "//firstlinenum[" .. firstlinenum .. "]\n"
@@ -299,10 +298,10 @@ function CodeBlock(s, attr)
   end
 
   local lang = ""
-  local not_lang = {numberLines = true, num = true, em = true, source = true}
+  local not_lang = { numberLines = true, num = true, em = true, source = true }
   not_lang["number-lines"] = true
   if is_list or (command == "source") then
-    for key,_ in pairs(classes) do
+    for key, _ in pairs(classes) do
       if not_lang[key] ~= true then
         lang = "[" .. key .. "]"
         break
@@ -313,9 +312,9 @@ function CodeBlock(s, attr)
   local caption = (command == "cmd") and "" or attr_val(attr, "caption")
   local identifier = ""
   local em = is_list and classes["em"] and "em" or ""
-  if (caption ~= "") then
+  if caption ~= "" then
     if is_list and (em == "") then
-      if (attr.id ~= "") then
+      if attr.id ~= "" then
         identifier = "[" .. attr.id .. "]"
       else
         list_num = list_num + 1
@@ -332,11 +331,7 @@ function CodeBlock(s, attr)
     end
   end
 
-  return (
-      firstlinenum ..
-      "//" .. em .. command .. num .. identifier .. caption .. lang ..
-      "{\n" .. s .. "\n//}"
-    )
+  return (firstlinenum .. "//" .. em .. command .. num .. identifier .. caption .. lang .. "{\n" .. s .. "\n//}")
 end
 
 function LineBlock(s)
@@ -345,7 +340,7 @@ function LineBlock(s)
 end
 
 function Link(s, src, tit)
-  if (src == s) then
+  if src == s then
     return format_inline("href", src)
   else
     return format_inline("href", src .. "," .. s)
@@ -412,7 +407,7 @@ function Table(caption, aligns, widths, headers, rows)
   add("--------------")
   for _, row in pairs(rows) do
     tmp = {}
-      for i, c in pairs(row) do
+    for i, c in pairs(row) do
       local align = html_align(aligns[i])
       if (config.use_table_align == "true") and (align ~= "") then
         c = format_inline("dtp", "table align=" .. align) .. c
@@ -426,13 +421,6 @@ function Table(caption, aligns, widths, headers, rows)
   return table.concat(buffer, "\n")
 end
 
-function Image(s, src, tit)
-  -- Re:VIEW @<icon> ignores caption and title
-  local id = string.gsub(src, "%.%w+$", "")
-  id = string.gsub(id, "^images/", "")
-  return format_inline("icon", id)
-end
-
 function CaptionedImage(s, src, tit, attr)
   local path = "[" .. s:gsub("%.%w+$", ""):gsub("^images/", "") .. "]"
 
@@ -442,7 +430,7 @@ function CaptionedImage(s, src, tit, attr)
   if scale == "" then
     local width = attr_scale(attr, "width")
     local height = attr_scale(attr, "height")
-    if (width ~= "") then
+    if width ~= "" then
       if (height ~= "") and (width ~= height) then
         log("WARNING: Image width and height must be same. Using width.\n")
       end
@@ -457,15 +445,13 @@ function CaptionedImage(s, src, tit, attr)
 
   local command = "//image"
   local caption = ""
-  if (tit == "") then
+  if tit == "" then
     command = "//indepimage"
   else
     caption = "[" .. tit .. "]"
   end
 
-  return (
-    command .. path .. caption .. scale .. "{" .. comment .. "\n//}"
-  )
+  return (command .. path .. caption .. scale .. "{" .. comment .. "\n//}")
 end
 
 function Image(s, src, tit, attr)
@@ -490,10 +476,10 @@ function Cite(s, cs)
 end
 
 function Quoted(quotetype, s)
-  if (quotetype == "SingleQuote") then
+  if quotetype == "SingleQuote" then
     return SingleQuoted(s)
   end
-  if (quotetype == "DoubleQuote") then
+  if quotetype == "DoubleQuote" then
     return DoubleQuoted(s)
   end
 end
@@ -531,15 +517,11 @@ function Div(s, attr)
   end
 
   if classes["review-internal"] then
-    s, _ = s:gsub(
-      "%]{<P2RREMOVEBELOW/>\n", "]{"
-    ):gsub(
-      "\n<P2RREMOVEABOVE/>//}", "//}"
-    )
+    s, _ = s:gsub("%]{<P2RREMOVEBELOW/>\n", "]{"):gsub("\n<P2RREMOVEABOVE/>//}", "//}")
     return s
   end
 
-  for cls,_ in pairs(classes) do
+  for cls, _ in pairs(classes) do
     s = "//" .. cls .. "{\n" .. s .. "\n//}"
   end
   return s
@@ -548,7 +530,7 @@ end
 function Span(s, attr)
   -- ruby and kw with a supplement
   local a = ""
-  for _, cmd in ipairs({"ruby", "kw"}) do
+  for _, cmd in ipairs({ "ruby", "kw" }) do
     a = attr_val(attr, cmd)
     if a ~= "" then
       s = format_inline(cmd, s .. "," .. a)
@@ -566,15 +548,15 @@ function Span(s, attr)
 end
 
 function RawInline(format, text)
-  if (format == "review") then
+  if format == "review" then
     return text
   end
 
-  if (metadata.hideraw) then
+  if metadata.hideraw then
     return ""
   end
 
-  if (format == "tex") then
+  if format == "tex" then
     return format_inline("embed", "|latex|" .. text)
   else
     return format_inline("embed", "|" .. format .. "|" .. text)
@@ -582,15 +564,15 @@ function RawInline(format, text)
 end
 
 function RawBlock(format, text)
-  if (format == "review") then
+  if format == "review" then
     return text
   end
 
-  if (metadata.hideraw) then
+  if metadata.hideraw then
     return ""
   end
 
-  if (format == "tex") then
+  if format == "tex" then
     return "//embed[latex]{\n" .. text .. "\n//}"
   else
     return "//embed[" .. format .. "]{\n" .. text .. "\n//}"
@@ -598,16 +580,16 @@ function RawBlock(format, text)
 end
 
 local function configure()
-  try_catch {
+  try_catch({
     try = function()
       metadata = PANDOC_DOCUMENT.meta
     end,
     catch = function(error)
       log("Due to your pandoc version is too old, config.yml loader is disabled.\n")
-    end
-  }
+    end,
+  })
 
-  if (metadata) then
+  if metadata then
     -- Load config from YAML
     for k, _ in pairs(config) do
       if metadata[k] ~= nil then
@@ -619,7 +601,7 @@ end
 
 if PANDOC_VERSION >= "3.0.0" then
   -- NOTE: A wrapper to support Pandoc >= 3.0 https://pandoc.org/custom-writers.html#changes-in-pandoc-3.0
-  function Writer (doc, opts)
+  function Writer(doc, opts)
     PANDOC_DOCUMENT = doc
     PANDOC_WRITER_OPTIONS = opts
     configure()
@@ -630,10 +612,11 @@ else
 end
 
 local meta = {}
-meta.__index =
-  function(_, key)
-    log(string.format("WARNING: Undefined function '%s'\n", key))
-    return function() return "" end
+meta.__index = function(_, key)
+  log(string.format("WARNING: Undefined function '%s'\n", key))
+  return function()
+    return ""
   end
+end
 
 setmetatable(_G, meta)
