@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'pandoc2review'
-  spec.version       = '1.6.0'
+  spec.version       = '2.0.0'
   spec.authors       = ['Kenshi Muto']
   spec.email         = ['kmuto@kmuto.jp']
   spec.license       = 'GPL-2.0'
