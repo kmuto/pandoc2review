@@ -83,21 +83,19 @@ local function log(s)
 end
 
 local function surround_inline(s)
-  if string.match(s, "{") or string.match(s, "}") then
-    if string.match(s, "%$") then -- use % for regexp escape
-      if string.match(s, "|") then
-        -- give up. escape } by \}
-        return "{" .. string.gsub(s, "}", "\\}") .. "}"
-      else
-        -- surround by ||
-        return "|" .. s .. "|"
-      end
-    else
-      -- surround by $$
-      return "$" .. s .. "$"
-    end
+  if not s:match("[{}]") then
+    return "{" .. s .. "}"
   end
-  return "{" .. s .. "}"
+  if not s:match("%$") then
+    return "$" .. s .. "$"
+  end
+
+  -- use % for regexp escape
+  if s:match("|") then
+    -- give up. escape } by \}
+    return "{" .. s:gsub("}", "\\}") .. "}"
+  end
+  return "|" .. s .. "|"
 end
 
 local function format_inline(fmt, s)
@@ -105,31 +103,18 @@ local function format_inline(fmt, s)
 end
 
 local function html_align(align)
-  if align == "AlignLeft" then
-    return ""
-  elseif align == "AlignRight" then
-    return "right"
-  elseif align == "AlignCenter" then
-    return "center"
-  else
-    return ""
-  end
+  return ({ AlignRight = "right", AlignCenter = "center" })[align] or ""
 end
 
 function Blocksep()
   return "\n\n"
 end
 
-function Doc(body, metadata, variables)
-  local buffer = {}
-  local function add(s)
-    table.insert(buffer, s)
+function Doc(body, meta, variables)
+  if #footnotes == 0 then
+    return body
   end
-  add(body)
-  if #footnotes > 0 then
-    add("\n" .. table.concat(footnotes, "\n"))
-  end
-  return table.concat(buffer, "\n")
+  return table.concat({ body, "", table.concat(footnotes, "\n") }, "\n")
 end
 
 function Str(s)
@@ -145,11 +130,7 @@ function LineBreak()
 end
 
 function SoftBreak(s)
-  if metadata.softbreak then
-    return " "
-  else
-    return "<P2RBR/>"
-  end
+  return metadata.softbreak and " " or "<P2RBR/>"
 end
 
 function Plain(s)
@@ -216,11 +197,7 @@ function Header(level, s, attr)
 end
 
 function HorizontalRule()
-  if config.use_hr == "true" then
-    return "//hr"
-  else
-    return ""
-  end
+  return config.use_hr == "true" and "//hr" or ""
 end
 
 local function lint_list(s)
@@ -272,26 +249,23 @@ end
 function CodeBlock(s, attr)
   local classes = attr_classes(attr)
 
-  local command = nil
+  local command = "list" -- default
   for k, v in pairs({ cmd = "cmd", source = "source", quote = "source" }) do
     if classes[k] then
       command = v
       break
     end
   end
-  command = command or "list"
 
   local is_list = command == "list"
 
-  local num = (is_list == false) and ""
-    or ((classes["numberLines"] or classes["number-lines"] or classes["num"]) and "num" or "")
+  local num = (is_list and (classes["numberLines"] or classes["number-lines"] or classes["num"])) and "num" or ""
 
   local firstlinenum = ""
   if is_list and (num == "num") then
     for _, key in ipairs({ "startFrom", "start-from", "firstlinenum" }) do
-      firstlinenum = attr_val(attr, key)
-      if firstlinenum ~= "" then
-        firstlinenum = "//firstlinenum[" .. firstlinenum .. "]\n"
+      if attr[key] then
+        firstlinenum = "//firstlinenum[" .. attr[key] .. "]\n"
         break
       end
     end
@@ -443,24 +417,15 @@ function CaptionedImage(s, src, tit, attr)
     scale = "[scale=" .. scale .. "]"
   end
 
-  local command = "//image"
-  local caption = ""
-  if tit == "" then
-    command = "//indepimage"
-  else
-    caption = "[" .. tit .. "]"
-  end
+  local command = tit == "" and "//indepimage" or "//image"
+  local caption = tit == "" and "" or ("[" .. tit .. "]")
 
   return (command .. path .. caption .. scale .. "{" .. comment .. "\n//}")
 end
 
 function Image(s, src, tit, attr)
   -- Re:VIEW @<icon> ignores caption and title
-  if attr.is_figure then
-    return CaptionedImage(src, s, tit, attr)
-  end
-  local id = string.gsub(src, "%.%w+$", "")
-  id = string.gsub(id, "^images/", "")
+  local id = src:gsub("%.%w+$", ""):gsub("^images/", "")
   return format_inline("icon", id)
 end
 
@@ -476,12 +441,7 @@ function Cite(s, cs)
 end
 
 function Quoted(quotetype, s)
-  if quotetype == "SingleQuote" then
-    return SingleQuoted(s)
-  end
-  if quotetype == "DoubleQuote" then
-    return DoubleQuoted(s)
-  end
+  return _G[quotetype](s)
 end
 
 function SingleQuoted(s)
@@ -497,13 +457,9 @@ function SmallCaps(s)
 end
 
 function Div(s, attr)
-  local blankline = attr_val(attr, "blankline")
-  if blankline ~= "" then
-    local buffer = {}
-    for _ = 1, tonumber(blankline) do
-      table.insert(buffer, "//blankline")
-    end
-    return table.concat(buffer, "\n")
+  local blankline = tonumber(attr.blankline)
+  if blankline then
+    return string.rep("//blankline\n", blankline):gsub("\n$", "")
   end
 
   local classes = attr_classes(attr)
@@ -599,24 +555,225 @@ local function configure()
   end
 end
 
-if PANDOC_VERSION >= "3.0.0" then
-  -- NOTE: A wrapper to support Pandoc >= 3.0 https://pandoc.org/custom-writers.html#changes-in-pandoc-3.0
-  function Writer(doc, opts)
-    PANDOC_DOCUMENT = doc
-    PANDOC_WRITER_OPTIONS = opts
-    configure()
-    return pandoc.write_classic(doc, opts)
-  end
-else
+setmetatable(_G, {
+  __index = function(_, key)
+    log(string.format("WARNING: Undefined function '%s'\n", key))
+    return function()
+      return ""
+    end
+  end,
+})
+
+if PANDOC_VERSION < "3.0.0" then
   configure()
+  return
 end
 
-local meta = {}
-meta.__index = function(_, key)
-  log(string.format("WARNING: Undefined function '%s'\n", key))
-  return function()
-    return ""
+Blocks = setmetatable({}, {
+  __index = function(_, key)
+    error("NotImplementedError: Blocks.%" .. tostring(key))
+  end,
+})
+
+Inlines = setmetatable({}, {
+  __index = function(_, key)
+    error("NotImplementedError: Inlines.%" .. tostring(key))
+  end,
+})
+
+local tidy_attr = function(el)
+  local ret = {}
+  for k, v in pairs(el.attr.attributes) do
+    ret[k] = v
+  end
+  ret.id = el.identifier or ""
+  ret.class = el.classes and table.concat(el.classes, " ")
+  return ret
+end
+
+local concat = pandoc.layout.concat
+
+local function render(...)
+  local x = pandoc.layout.render(...):gsub("\n+$", "")
+  return x
+end
+
+local function inlines(els)
+  local buff = {}
+  for _, el in ipairs(els) do
+    table.insert(buff, Inlines[el.tag](el))
+  end
+  return concat(buff)
+end
+
+local function blocks(els, sep)
+  local buff = {}
+  for _, el in ipairs(els) do
+    table.insert(buff, Blocks[el.tag](el))
+  end
+  return concat(buff, sep)
+end
+
+Inlines.Str = function(el)
+  return Str(el.text)
+end
+
+for _, v in pairs({ "Space", "LineBreak", "SoftBreak" }) do
+  Inlines[v] = _G[v]
+end
+
+Blocks.HorizontalRule = function(_)
+  return HorizontalRule() .. "\n"
+end
+
+Blocks.Plain = function(el)
+  return inlines(el.content) .. "\n"
+end
+
+Blocks.Para = function(el)
+  if #el.content == 1 and el.content[1].tag == "Image" then
+    local img = el.content[1]
+    return CaptionedImage(img.src, img.title, render(inlines(img.caption)), tidy_attr(img)) .. "\n"
+  end
+  return inlines(el.content) .. "\n"
+end
+
+Blocks.Header = function(el)
+  return Header(el.level, render(inlines(el.content)), tidy_attr(el)) .. "\n"
+end
+
+local function render_blocks(blks, sep)
+  local ret = {}
+  for _, v in pairs(blks) do
+    table.insert(ret, render(blocks(v, sep or "\n")))
+  end
+  return ret
+end
+
+Blocks.BulletList = function(el)
+  return BulletList(render_blocks(el.content)) .. "\n"
+end
+
+Blocks.OrderedList = function(el)
+  return OrderedList(render_blocks(el.content), el.start) .. "\n"
+end
+
+Blocks.DefinitionList = function(el)
+  local items = {}
+  for _, v in pairs(el.content) do
+    local term = render(inlines(v[1]))
+    table.insert(items, { [term] = render_blocks(v[2]) })
+  end
+  return DefinitionList(items) .. "\n"
+end
+
+Blocks.BlockQuote = function(el)
+  return BlockQuote(render(blocks(el.content, "\n"))) .. "\n"
+end
+
+Blocks.CodeBlock = function(el)
+  return CodeBlock(el.text, tidy_attr(el)) .. "\n"
+end
+
+Blocks.LineBlock = function(el)
+  local lines = {}
+  for _, v in pairs(el.content) do
+    table.insert(lines, render(inlines(v)))
+  end
+  return LineBlock(lines) .. "\n"
+end
+
+Inlines.Link = function(el)
+  return Link(render(inlines(el.content)), el.target, el.title)
+end
+
+Inlines.Code = function(el)
+  return Code(el.text, tidy_attr(el))
+end
+
+for _, k in pairs({ "Emph", "Strong", "Strikeout", "Underline", "Subscript", "Superscript", "SmallCaps" }) do
+  Inlines[k] = function(el)
+    return _G[k](render(inlines(el.content)))
   end
 end
 
-setmetatable(_G, meta)
+Inlines.Math = function(el)
+  return _G[el.mathtype](el.text)
+end
+
+Blocks.Table = function(el)
+  local tbl = pandoc.utils.to_simple_table(el)
+  local headers = render_blocks(tbl.headers)
+  local rows = {}
+  for _, row in pairs(tbl.rows) do
+    table.insert(rows, render_blocks(row, ""))
+  end
+  return Table(render(inlines(tbl.caption)), tbl.aligns, tbl.widths, headers, rows) .. "\n"
+end
+
+Inlines.Image = function(el)
+  return Image(render(inlines(el.caption)), el.src, el.title, tidy_attr(el))
+end
+
+Inlines.Note = function(el)
+  return Note(render(blocks(el.content, "\n")))
+end
+
+Inlines.Cite = function(el)
+  return Cite(render(inlines(el.content)))
+end
+
+Inlines.Quoted = function(el)
+  return Quoted(el.quotetype, render(inlines(el.content)))
+end
+
+Blocks.Div = function(el)
+  return Div(render(blocks(el.content, "\n")), tidy_attr(el)) .. "\n"
+end
+
+Inlines.Span = function(el)
+  return Span(render(inlines(el.content)), tidy_attr(el))
+end
+
+Inlines.RawInline = function(el)
+  return RawInline(el.format, el.text)
+end
+
+Blocks.RawBlock = function(el)
+  return RawBlock(el.format, el.text) .. "\n"
+end
+
+Blocks.Figure = function(el)
+  if #el.content > 1 or #el.content[1].content > 1 or el.content[1].content[1].tag ~= "Image" then
+    error("NotImplementedError: current implementation assumes Figure contains only a single image.")
+    -- because Pandoc 3.1.4 does not support Pandoc's markdown cotaining Figure with multiple images...
+  end
+
+  local img = el.content[1].content[1]
+
+  return CaptionedImage(img.src, img.title, render(inlines(img.caption)), tidy_attr(img)) .. "\n"
+end
+
+function Writer(doc, opts)
+  PANDOC_DOCUMENT = doc
+  PANDOC_WRITER_OPTIONS = opts
+  configure()
+
+  if metadata.classicwriter then
+    if pandoc.write_classic then
+      return pandoc.write_classic(
+        doc:walk({
+          Figure = function(el)
+            return pandoc.RawBlock("review", render(Blocks.Figure(el)))
+          end,
+        }),
+        opts
+      )
+    end
+    log("WARNING: pandoc.write_classic is defunct. Using modern writer")
+  end
+
+  -- body should keep trailing new lines but remove one if there are footnotes for the backward-compatibility
+  local body = pandoc.layout.render(pandoc.layout.concat({ blocks(doc.blocks, "\n") }))
+  return Doc(#footnotes == 0 and body or body:gsub("\n$", ""))
+end
