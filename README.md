@@ -57,6 +57,10 @@ GNU General Public License Version 2
 - [@takahashim](https://github.com/takahashim)
 
 ## Changelog
+### 2.0.0
+- Full refactoring for Pandoc 3 model. Thanks atusy for your hard work!
+- Introduce rubocop and regression tests.
+
 ### 1.6.0
 - Fix inline raw.
 - Refactoring.
@@ -123,6 +127,7 @@ pandoc2review ファイル名 > ファイル名.re
 - `--shiftheading <数>`: 見出しレベルに <数> だけ加えます (pandoc >= 2.8)
 - `--disable-eaw`: Ruby の EAW ライブラリを使った段落構築を使いません
 - `--hideraw`: raw 判定されたインライン・ブロックを出力に含めません
+- `--classic-writer`: Pandoc 3 で Pando 2 互換のクラシックカスタム Writer モードを使います
 
 ## 仕様など
 - [pandoc2review における Markdown 形式処理の注意事項](markdown-format.ja.md)
