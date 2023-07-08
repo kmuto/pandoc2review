@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2020-2023 Kenshi Muto
 require 'optparse'
 require 'unicode/eaw'
@@ -7,7 +6,7 @@ require 'open3'
 
 class Pandoc2ReVIEW
   def main
-    luadir = ((Pathname.new(__FILE__)).realpath.dirname + '../lua').realpath
+    luadir = (Pathname.new(__FILE__).realpath.dirname + '../lua').realpath
     parse_args
 
     ARGV.each do |file|
@@ -17,24 +16,24 @@ class Pandoc2ReVIEW
       end
       args = ['pandoc', '-t', File.join(luadir, 'review.lua'), '--lua-filter', File.join(luadir, 'filters.lua')]
 
-      if file =~ /\.md$/i
+      if file.match?(/\.md$/i)
         args += ['-f', 'markdown-auto_identifiers-smart+east_asian_line_breaks']
 
         if @disableeaw
-          args += ['-M', "softbreak:true"]
+          args += ['-M', 'softbreak:true']
         end
 
         if @hideraw
-          args += ['-M', "hideraw:true"]
+          args += ['-M', 'hideraw:true']
         end
       end
 
       if @stripemptydev
-        args += ['-M', "stripemptydev:true"]
+        args += ['-M', 'stripemptydev:true']
       end
 
       if @classicwriter
-        args += ['-M', "classicwriter:true"]
+        args += ['-M', 'classicwriter:true']
       end
 
       if @heading
@@ -45,7 +44,7 @@ class Pandoc2ReVIEW
 
       stdout, stderr, status = Open3.capture3(*args)
       unless status.success?
-        STDERR.puts stderr
+        $stderr.puts stderr
         exit 1
       end
       print modify_result(stdout)
@@ -72,13 +71,13 @@ class Pandoc2ReVIEW
     opts.on('--disable-eaw', "Disable compositing a paragraph with Ruby's EAW library.") do
       @disableeaw = true
     end
-    opts.on('--hideraw', "Hide raw inline/block with no review format specified.") do
+    opts.on('--hideraw', 'Hide raw inline/block with no review format specified.') do
       @hideraw = true
     end
-    opts.on('--strip-emptydev', "Strip <div> without any id or class") do
+    opts.on('--strip-emptydev', 'Strip <div> without any id or class') do
       @stripemptydev = true
     end
-    opts.on('--classic-writer', "Prefer classic custom writer on Pandoc 3.x to be compatible with Pandoc 2.x") do
+    opts.on('--classic-writer', 'Prefer classic custom writer on Pandoc 3.x to be compatible with Pandoc 2.x') do
       @classicwriter = true
     end
 

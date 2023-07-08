@@ -1,0 +1,305 @@
+AllCops:
+  Exclude:
+    - samples/**/*
+  DisplayCopNames: true
+  NewCops: enable
+  TargetRubyVersion: 2.7
+
+require:
+  - rubocop-performance
+  - rubocop-rake
+
+#### Lint
+
+Lint/NestedMethodDefinition:
+  Exclude:
+    - 'test/*'
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/ErbNewArguments:
+  Enabled: false
+
+# make it enable when supporting only Ruby 3.0 and higher.
+Lint/RedundantDirGlobSort:
+  Enabled: false
+
+#### Performance
+
+Performance/DeletePrefix:
+  Enabled: false
+
+Performance/StringInclude:
+  Enabled: false
+
+Performance/CollectionLiteralInLoop:
+  Enabled: false
+
+Performance/MapCompact:
+  Enabled: false
+
+#### Style
+
+Style/AsciiComments:
+  Enabled: false
+
+# Use alias_method instead of alias.
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+  Enabled: true
+
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+  Enabled: true
+
+Style/CommentedKeyword:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FormatString:
+  EnforcedStyle: sprintf
+  Enabled: true
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Style/ZeroLengthPredicate:
+  Enabled: false
+
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+  Enabled: true
+
+Style/TernaryParentheses:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+  Enabled: true
+
+Style/SafeNavigation:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+  Enabled: true
+
+Style/RescueModifier:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: nested
+  Enabled: true
+
+Style/LineEndConcatenation:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  AllowedPatterns:
+    - 'require'
+    - 'include'
+    - 'file'
+    - 'task'
+    - 'desc'
+    - 'info'
+    - 'gem'
+    - 'exit'
+    - 'print'
+    - 'puts'
+    - 'write'
+    - 'warn'
+    - 'error'
+    - 'error!'
+    - 'app_error'
+    - 'raise'
+    - 'yield'
+    - 'source'
+    - 'assert'
+    - 'assert_equal'
+    - 'assert_raise'
+    - 'assert_raises'
+    - 'assert_nothing_raised'
+    - 'sh'
+    - 'mv'
+    - 'rm_rf'
+  Enabled: true
+
+Style/MixinUsage:
+  Enabled: false
+
+Style/NumericLiterals:
+  MinDigits: 6
+
+Style/PercentQLiterals:
+  EnforcedStyle: upper_case_q
+  Enabled: true
+
+Style/PerlBackrefs:
+  Enabled: false
+
+Style/RaiseArgs:
+  EnforcedStyle: exploded
+  Enabled: true
+
+Style/RedundantBegin:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/StderrPuts:
+  Enabled: false
+
+Style/WordArray:
+  MinSize: 10
+
+Style/RedundantPercentQ:
+  Enabled: false
+
+Style/WhileUntilModifier:
+  Enabled: false
+
+Style/SlicingWithRange:
+  Enabled: false
+
+Style/AccessorGrouping:
+  Enabled: false
+
+Style/CaseLikeIf:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Style/CombinableLoops:
+  Enabled: false
+
+Style/FetchEnvVar:
+  Enabled: false
+
+### Layout
+
+Layout/BlockAlignment:
+  Enabled: false
+
+Layout/ClosingHeredocIndentation:
+  Enabled: false
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+  Enabled: true
+
+Layout/HeredocIndentation:
+  Enabled: false
+
+Layout/SpaceAroundBlockParameters:
+  EnforcedStyleInsidePipes: no_space
+  Enabled: true
+
+Layout/SpaceInsideStringInterpolation:
+  EnforcedStyle: no_space
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  Enabled: true
+  AllowInHeredoc: true
+
+Layout/LineLength:
+  Max: 256
+  Exclude:
+    - "test/**/*"
+
+#### Metrics
+
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/ModuleLength:
+  Max: 300
+
+Metrics/ParameterLists:
+  Max: 8
+
+Metrics/PerceivedComplexity:
+  Max: 28
+
+Metrics/ClassLength:
+  Max: 1500
+  Exclude:
+    - 'test/*.rb'
+
+### should be < 50
+Metrics/MethodLength:
+  Max: 100
+  Exclude:
+    - "bin/review-*"
+    - "bin/review2*"
+    - "test/**/*"
+
+### should be < 20
+Metrics/CyclomaticComplexity:
+  Max: 25
+
+### should be < 60
+Metrics/AbcSize:
+  Max: 120
+  Exclude:
+    - "bin/review-*"
+    - "test/**/*"
+
+### shoud be < 25
+Metrics/BlockLength:
+  CountComments: false  # count full line comments?
+  Max: 62
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'test/**/*.rb'
+
+## Naming
+
+Naming/FileName:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Naming/VariableNumber:
+  EnforcedStyle: normalcase
+  Enabled: true
+  Exclude:
+    - test/*
+
+#### Security
+
+#### Gemspec
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec

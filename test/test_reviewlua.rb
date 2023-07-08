@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'test_helper'
 
 class ReviewLuaTest < Test::Unit::TestCase
@@ -392,7 +391,7 @@ EOB
   + chard
 EOB
 
-   expected = <<-EOB
+    expected = <<-EOB
  * fruits
 
 //beginchild
@@ -685,7 +684,7 @@ EOB
   def test_span_base
     src = '<span>abc</span>'
     assert_equal 'abc', pandoc(src).chomp
-    %w(bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq hd column uchar icon m w wb idx hidx balloon).each do |tag|
+    %w[bou ami u b i strong em tt tti ttb code tcy chap title chapref list img table eq hd column uchar icon m w wb idx hidx balloon].each do |tag|
       src = %Q(<span class="#{tag}">abc</span>)
       assert_equal "@<#{tag}>{abc}", pandoc(src).chomp
     end
@@ -929,9 +928,8 @@ EOB
     assert_equal expected, pandoc(src)
   end
 
-
   def test_block_nodiv
-    # FIXME:Is it expected behavior on pandoc?
+    # FIXME: Is it expected behavior on pandoc?
     src = <<-EOB
 :::
 Para1
@@ -1292,20 +1290,20 @@ EOB
 
     src = '![title](path.png){width=30}'
     stdout, stderr = pandoc(src, err: true)
-    assert_match /WARNING: Units must be % for/, stderr
+    assert_match(/WARNING: Units must be % for/, stderr)
     assert_equal "//image[path][title]{\n//}", stdout.chomp
 
     src = '![title](path.png){width=30% height=50%}'
     stdout, stderr = pandoc(src, err: true)
-    assert_match /WARNING: Image width and height/, stderr
+    assert_match(/WARNING: Image width and height/, stderr)
     assert_equal "//image[path][title][scale=0.3]{\n//}", stdout.chomp
 
     src = 'This is ![](lalune.jpg) image.'
-    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp
+    assert_equal 'This is @<icon>{lalune} image.', pandoc(src).chomp
     src = 'This is ![La Lune](lalune.jpg) image.'
-    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
+    assert_equal 'This is @<icon>{lalune} image.', pandoc(src).chomp # XXX: Ignores ttile
     src = 'This is ![La Lune](lalune.jpg "Le Voyage dans la Lune") image.'
-    assert_equal "This is @<icon>{lalune} image.", pandoc(src).chomp # XXX: Ignores ttile
+    assert_equal 'This is @<icon>{lalune} image.', pandoc(src).chomp # XXX: Ignores ttile
 
     src = '![](images/baz/foo.bar.lalune.jpg)'
     assert_equal "//indepimage[baz/foo.bar.lalune]{\n//}", pandoc(src).chomp

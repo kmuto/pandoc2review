@@ -9,10 +9,10 @@ def pandoc(src, opts: nil, err: nil, override_args: nil)
     args += ' ' + opts
   end
   if err
-    stdout, stderr, status = Open3.capture3(args, stdin_data: src)
+    stdout, stderr, _status = Open3.capture3(args, stdin_data: src)
     [p2r.modify_result(stdout), stderr]
   else
-    stdout, status = Open3.capture2(args, stdin_data: src)
+    stdout, _status = Open3.capture2(args, stdin_data: src)
     p2r.modify_result(stdout)
   end
 end

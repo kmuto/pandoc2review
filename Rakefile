@@ -1,5 +1,5 @@
-require "bundler/gem_tasks"
-require "rake/testtask"
+require 'bundler/gem_tasks'
+require 'rake/testtask'
 
 desc 'Run tests'
 task :test, :target do |_, argv|
@@ -10,4 +10,14 @@ task :test, :target do |_, argv|
   end
 end
 
-task :default => :test
+desc 'Check with rubocop'
+task :rubocop do
+  begin
+    require 'rubocop/rake_task'
+    RuboCop::RakeTask.new
+  rescue LoadError
+    $stderr.puts 'rubocop not found'
+  end
+end
+
+task default: %i[rubocop test]

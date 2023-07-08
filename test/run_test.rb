@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # Test:
 # ALL: ruby test/run_test.rb
 # UNIT: ruby test/run_test.rb -v -n test_para
