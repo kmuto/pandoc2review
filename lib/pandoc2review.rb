@@ -59,7 +59,7 @@ class Pandoc2ReVIEW
     @classicwriter = nil
     opts = OptionParser.new
     opts.banner = 'Usage: pandoc2review [option] file [file ...]'
-    opts.version = '1.6'
+    opts.version = '2.0'
 
     opts.on('--help', 'Prints this message and quit.') do
       puts opts.help
