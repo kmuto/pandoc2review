@@ -106,6 +106,10 @@ local function html_align(align)
   return ({ AlignRight = "right", AlignCenter = "center" })[align] or ""
 end
 
+local function escape_closing_bracket(s)
+  return (s:gsub("]", "\\]"))
+end
+
 function Blocksep()
   return "\n\n"
 end
@@ -295,7 +299,7 @@ function CodeBlock(s, attr)
         identifier = "[list" .. list_num .. "]"
       end
     end
-    caption = "[" .. caption .. "]"
+    caption = "[" .. escape_closing_bracket(caption) .. "]"
   else
     if is_list then
       em = "em"
@@ -365,7 +369,7 @@ function Table(caption, aligns, widths, headers, rows)
   end
   if caption ~= "" then
     table_num = table_num + 1
-    add("//table[table" .. table_num .. "][" .. caption .. "]{")
+    add("//table[table" .. table_num .. "][" .. escape_closing_bracket(caption) .. "]{")
   else
     add("//table{")
   end
@@ -418,7 +422,7 @@ function CaptionedImage(s, src, tit, attr)
   end
 
   local command = tit == "" and "//indepimage" or "//image"
-  local caption = tit == "" and "" or ("[" .. tit .. "]")
+  local caption = tit == "" and "" or ("[" .. escape_closing_bracket(tit) .. "]")
 
   return (command .. path .. caption .. scale .. "{" .. comment .. "\n//}")
 end
@@ -431,7 +435,7 @@ end
 
 function Note(s)
   note_num = note_num + 1
-  table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. s .. "]")
+  table.insert(footnotes, "//footnote[fn" .. note_num .. "][" .. escape_closing_bracket(s) .. "]")
   return format_inline("fn", "fn" .. note_num)
 end
 
